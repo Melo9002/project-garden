@@ -10,7 +10,7 @@ The vision is a quiet living diorama: tend mysterious pixies, shape their enviro
 
 Implemented:
 
-- One simple 3D garden with a decorative pond, rocks, and plants.
+- One editor-visible 3D garden with a decorative pond, rocks, plants, collisions, spawn markers, and camera viewpoints.
 - Four geometric placeholder pixies representing Earth, Fire, Wind, and Water.
 - Independent wandering, idling, and gentle hovering.
 - Three fixed camera viewpoints and pause/resume controls.
@@ -27,7 +27,7 @@ Requirements: **Godot 4.7 standard edition**, using GDScript and the Compatibili
 3. Open the project and press **F5**.
 4. Use **Pause / resume** and **Change viewpoint** in the on-screen panel.
 
-Scenery and UI are currently assembled at runtime, so the editor scene tree is intentionally minimal before running.
+Open `scenes/garden.tscn` to inspect and edit the complete garden layout. The UI and pixy placeholder are reusable child scenes.
 
 If Godot is on your PATH, you can also launch from the repository root:
 
@@ -59,8 +59,11 @@ The code keeps individual state and simulation rules independent of scene nodes 
 
 | File | Responsibility |
 | --- | --- |
-| `scenes/garden.tscn` | Main scene entry point |
-| `scripts/garden.gd` | Scene assembly, fixed-step scheduling, camera, and UI |
+| `scenes/garden.tscn` | Editor-authored garden, lighting, collisions, spawns and viewpoints |
+| `scenes/garden_ui.tscn` | Reusable editor-authored interface |
+| `scenes/pixy_placeholder.tscn` | Reusable temporary pixy visual |
+| `scripts/garden.gd` | Fixed-step scheduling and scene/simulation coordination |
+| `scripts/garden_ui.gd` | UI signals and status presentation |
 | `scripts/garden_simulation.gd` | Seeded movement and idle rules |
 | `scripts/pixy_state.gd` | Each pixie's identity, location, and movement state |
 | `scripts/pixy_view.gd` | Temporary geometry, labels, and cosmetic hovering |

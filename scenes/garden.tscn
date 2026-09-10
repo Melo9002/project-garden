@@ -1,7 +1,137 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/garden.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/pixy_placeholder.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/garden_ui.tscn" id="3"]
+[sub_resource type="Environment" id="Env"]
+background_mode = 1
+background_color = Color(0.141176, 0.219608, 0.243137, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.705882, 0.784314, 0.737255, 1)
+ambient_light_energy = 0.65
+[sub_resource type="StandardMaterial3D" id="SoilMat"]
+albedo_color = Color(0.313726, 0.341176, 0.278431, 1)
+roughness = 1.0
+[sub_resource type="BoxMesh" id="SoilMesh"]
+material = SubResource("SoilMat")
+size = Vector3(9.5, 0.8, 6.4)
+[sub_resource type="StandardMaterial3D" id="GrassMat"]
+albedo_color = Color(0.443137, 0.533333, 0.4, 1)
+roughness = 1.0
+[sub_resource type="BoxMesh" id="GrassMesh"]
+material = SubResource("GrassMat")
+size = Vector3(9.6, 0.12, 6.5)
+[sub_resource type="StandardMaterial3D" id="WaterMat"]
+albedo_color = Color(0.388235, 0.607843, 0.643137, 1)
+roughness = 0.45
+[sub_resource type="BoxMesh" id="PondMesh"]
+material = SubResource("WaterMat")
+size = Vector3(2.1, 0.035, 1.6)
+[sub_resource type="BoxShape3D" id="GroundShape"]
+size = Vector3(9.6, 0.8, 6.5)
+[sub_resource type="BoxShape3D" id="NSShape"]
+size = Vector3(9.8, 1, 0.2)
+[sub_resource type="BoxShape3D" id="EWShape"]
+size = Vector3(0.2, 1, 6.5)
+[sub_resource type="StandardMaterial3D" id="RockMat"]
+albedo_color = Color(0.596078, 0.631373, 0.564706, 1)
+roughness = 1.0
+[sub_resource type="BoxMesh" id="RockMesh"]
+material = SubResource("RockMat")
+size = Vector3(0.42, 0.34, 0.38)
+[sub_resource type="StandardMaterial3D" id="PlantMat"]
+albedo_color = Color(0.298039, 0.439216, 0.34902, 1)
+roughness = 1.0
+[sub_resource type="SphereMesh" id="PlantMesh"]
+material = SubResource("PlantMat")
+radius = 0.35
+height = 0.7
 
 [node name="Garden" type="Node3D"]
 script = ExtResource("1")
+pixy_scene = ExtResource("2")
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env")
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-55, -30, 0)
+light_color = Color(1, 0.941176, 0.803922, 1)
+shadow_enabled = true
 
+[node name="Environment" type="Node3D" parent="."]
+[node name="Terrain" type="Node3D" parent="Environment"]
+[node name="Soil" type="MeshInstance3D" parent="Environment/Terrain"]
+position = Vector3(0, -0.42, 0)
+mesh = SubResource("SoilMesh")
+[node name="Grass" type="MeshInstance3D" parent="Environment/Terrain"]
+mesh = SubResource("GrassMesh")
+[node name="Pond" type="MeshInstance3D" parent="Environment"]
+position = Vector3(2.5, 0.075, -1.3)
+mesh = SubResource("PondMesh")
+[node name="Decorations" type="Node3D" parent="Environment"]
+[node name="RockLeft" type="MeshInstance3D" parent="Environment/Decorations"]
+position = Vector3(-3.5, 0.18, -2.5)
+rotation_degrees = Vector3(0, 26, 8)
+mesh = SubResource("RockMesh")
+[node name="RockCenter" type="MeshInstance3D" parent="Environment/Decorations"]
+position = Vector3(-0.8, 0.16, 2.65)
+rotation_degrees = Vector3(5, 58, 0)
+scale = Vector3(1.3, 0.8, 1)
+mesh = SubResource("RockMesh")
+[node name="RockPond" type="MeshInstance3D" parent="Environment/Decorations"]
+position = Vector3(3.65, 0.2, -2.2)
+rotation_degrees = Vector3(0, -18, -5)
+scale = Vector3(1.15, 1.2, 1)
+mesh = SubResource("RockMesh")
+[node name="PlantLeft" type="MeshInstance3D" parent="Environment/Decorations"]
+position = Vector3(-3.9, 0.35, -2.4)
+mesh = SubResource("PlantMesh")
+[node name="PlantRight" type="MeshInstance3D" parent="Environment/Decorations"]
+position = Vector3(3.8, 0.35, -2.45)
+mesh = SubResource("PlantMesh")
+[node name="PlantBack" type="MeshInstance3D" parent="Environment/Decorations"]
+position = Vector3(-2.4, 0.35, -2.65)
+mesh = SubResource("PlantMesh")
+
+[node name="Collisions" type="StaticBody3D" parent="."]
+[node name="Ground" type="CollisionShape3D" parent="Collisions"]
+position = Vector3(0, -0.42, 0)
+shape = SubResource("GroundShape")
+[node name="NorthBoundary" type="CollisionShape3D" parent="Collisions"]
+position = Vector3(0, 0.5, -3.25)
+shape = SubResource("NSShape")
+[node name="SouthBoundary" type="CollisionShape3D" parent="Collisions"]
+position = Vector3(0, 0.5, 3.25)
+shape = SubResource("NSShape")
+[node name="WestBoundary" type="CollisionShape3D" parent="Collisions"]
+position = Vector3(-4.8, 0.5, 0)
+shape = SubResource("EWShape")
+[node name="EastBoundary" type="CollisionShape3D" parent="Collisions"]
+position = Vector3(4.8, 0.5, 0)
+shape = SubResource("EWShape")
+
+[node name="Interactables" type="Node3D" parent="."]
+[node name="PixySpawns" type="Node3D" parent="."]
+[node name="Earth" type="Marker3D" parent="PixySpawns"]
+position = Vector3(-2.4, 0.65, 0.5)
+[node name="Fire" type="Marker3D" parent="PixySpawns"]
+position = Vector3(-0.8, 0.65, 0.5)
+[node name="Wind" type="Marker3D" parent="PixySpawns"]
+position = Vector3(0.8, 0.65, 0.5)
+[node name="Water" type="Marker3D" parent="PixySpawns"]
+position = Vector3(2.4, 0.65, 0.5)
+[node name="Pixies" type="Node3D" parent="."]
+
+[node name="CameraRig" type="Node3D" parent="."]
+[node name="Viewpoints" type="Node3D" parent="CameraRig"]
+[node name="Right" type="Marker3D" parent="CameraRig/Viewpoints"]
+position = Vector3(8, 8, 11)
+[node name="Left" type="Marker3D" parent="CameraRig/Viewpoints"]
+position = Vector3(-8, 8, 11)
+[node name="High" type="Marker3D" parent="CameraRig/Viewpoints"]
+position = Vector3(0, 10, 10)
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+position = Vector3(8, 8, 11)
+rotation_degrees = Vector3(-32.9, 36, 0)
+projection = 1
+size = 13.2
+[node name="GardenUI" parent="." instance=ExtResource("3")]
