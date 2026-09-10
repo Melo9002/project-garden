@@ -1,7 +1,9 @@
 # Roadmap
 
 - Batch 001: runnable editor-visible diorama, reusable UI and pixy scenes, authored camera/spawn markers, separate individual state and seeded wandering, documentation. Implemented; validation below and human visual playtest pending.
-- Batch 002: approved 2D placeholder sprite integration; individual selection/inspection; verify readability and grounding.
+- Camera/environment follow-up: implemented a smooth bounded side-scrolling perspective camera, keyboard and drag panning, wheel zoom, three quick stops, a camera-position strip, wider layered nature scenery, billboard pixy placeholders and authored future placement regions. GPU capture and headless checks passed; hands-on control feel still needs Pedro's playtest.
+- Endless-map illusion follow-up: implemented oversized hidden terrain, foreground edge framing, a 2D distant-forest band with perspective parallax, an organic oval pond and a semantic traversable-water region. Keep procedural environment generation as a later experiment after this authored test map has been validated.
+- Batch 002: 2D placeholder sprite integration and individual selection/inspection implemented. Each pixy has a forgiving click volume, hover emphasis, selection ring, and a live inspector showing element, mood and activity. GPU layout and startup validation passed; Pedro's click/readability playtest remains.
 - Batch 003: care controls plus visible environmental and social responses, four emotes and one friendly interaction.
 - Batch 004: shared pupal stage, one development milestone and save/load.
 - Batch 005: playtest adjustments, Pedro's replacement art, export verification. Publication separately authorized.
@@ -15,7 +17,7 @@ Observe: camera framing, movement speed, useful idle durations and whether creat
 Hypothesis: expressions plus subsequent behavior let Pedro identify whether a creature welcomed an environmental or social event without inspecting numerical stats.
 
 ## Batch 001 validation
-Godot 4.7 imported the project and ran 180 headless frames without script errors. A separate simulation check passed 18,000 ticks (ten simulated minutes): bounds, equal-seed reproducibility and independent individual state. Tool environment emitted a certificate-store warning; no network functionality is used. Visual playtest remains pending.
+Godot 4.7.2 imported the project and ran 180 headless frames without script errors. A separate simulation check passed 18,000 ticks (ten simulated minutes): expanded bounds, equal-seed reproducibility and independent individual state. A real NVIDIA/OpenGL frame capture also completed successfully. Hands-on camera feel and interaction still require Pedro's playtest.
 
 ## Editor-first refactor
 Static runtime construction was removed. Terrain, pond, decorations, collisions, an interactables container, spawn markers, lighting and camera viewpoints now live in `garden.tscn`. UI and placeholder visuals are reusable scenes. Runtime instantiation remains only for simulated inhabitants. Preserve this authored-content boundary in future work.

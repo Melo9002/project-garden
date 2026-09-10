@@ -6,26 +6,25 @@ extends Node3D
 @export var camera_look_target: Vector3 = Vector3(0, 0.1, 0)
 @onready var pixy_container: Node3D = $Pixies
 @onready var spawn_container: Node3D = $PixySpawns
-@onready var camera: Camera3D = $CameraRig/Camera3D
-@onready var viewpoint_container: Node3D = $CameraRig/Viewpoints
+@onready var camera_rig: GardenCamera = $CameraRig
 @onready var ui: CanvasLayer = $GardenUI
 
 var simulation := GardenSimulation.new()
 var views: Array[PixyView] = []
-var viewpoints: Array[Node3D] = []
 var paused := false
-var camera_index := 0
+var camera_stop := 1
 var accumulator := 0.0
+var selected_index := -1
 const COLORS := [Color("a5bd70"), Color("ed9565"), Color("c2dfca"), Color("94badd")]
 
 func _ready() -> void:
 	assert(pixy_scene != null, "Garden requires a Pixy scene")
-	viewpoints.assign(viewpoint_container.get_children())
 	_apply_authored_spawn_positions()
 	_spawn_pixy_views()
 	ui.pause_requested.connect(_toggle_pause)
 	ui.viewpoint_requested.connect(_next_viewpoint)
-	_set_camera_from_viewpoint()
+	camera_rig.position_changed.connect(ui.set_camera_position)
+	camera_rig.focus_normalized(0.5)
 
 func _process(delta: float) -> void:
 	if not paused:
@@ -36,6 +35,8 @@ func _process(delta: float) -> void:
 			accumulator -= step
 	for i in range(views.size()):
 		views[i].sync(simulation.pixies[i], simulation.elapsed)
+	if selected_index >= 0:
+		ui.show_pixy(simulation.pixies[selected_index])
 	ui.set_status("PAUSED" if paused else "OBSERVING  ·  %02d:%02d" % [int(simulation.elapsed) / 60, int(simulation.elapsed) % 60])
 
 func _apply_authored_spawn_positions() -> void:
@@ -54,20 +55,19 @@ func _spawn_pixy_views() -> void:
 		assert(view != null, "Configured Pixy scene must have PixyView at its root")
 		pixy_container.add_child(view)
 		view.setup(simulation.pixies[i].element, COLORS[i], float(i))
+		view.selected.connect(_select_pixy)
 		view.sync(simulation.pixies[i], 0.0)
 		views.append(view)
+
+func _select_pixy(chosen_view: PixyView) -> void:
+	selected_index = views.find(chosen_view)
+	for i in range(views.size()):
+		views[i].set_selected(i == selected_index)
+	ui.show_pixy(simulation.pixies[selected_index])
 
 func _toggle_pause() -> void:
 	paused = not paused
 
 func _next_viewpoint() -> void:
-	if viewpoints.is_empty():
-		return
-	camera_index = (camera_index + 1) % viewpoints.size()
-	_set_camera_from_viewpoint()
-
-func _set_camera_from_viewpoint() -> void:
-	if viewpoints.is_empty():
-		return
-	camera.global_position = viewpoints[camera_index].global_position
-	camera.look_at(camera_look_target)
+	camera_stop = (camera_stop + 1) % 3
+	camera_rig.focus_normalized(float(camera_stop) / 2.0)

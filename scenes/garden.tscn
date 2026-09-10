@@ -1,8 +1,10 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/garden.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/pixy_placeholder.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/garden_ui.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/garden_camera.gd" id="4"]
+[ext_resource type="Texture2D" path="res://art/distant_forest.svg" id="5"]
 [sub_resource type="Environment" id="Env"]
 background_mode = 1
 background_color = Color(0.141176, 0.219608, 0.243137, 1)
@@ -14,25 +16,28 @@ albedo_color = Color(0.313726, 0.341176, 0.278431, 1)
 roughness = 1.0
 [sub_resource type="BoxMesh" id="SoilMesh"]
 material = SubResource("SoilMat")
-size = Vector3(9.5, 0.8, 6.4)
+size = Vector3(26, 0.8, 7.5)
 [sub_resource type="StandardMaterial3D" id="GrassMat"]
 albedo_color = Color(0.443137, 0.533333, 0.4, 1)
 roughness = 1.0
 [sub_resource type="BoxMesh" id="GrassMesh"]
 material = SubResource("GrassMat")
-size = Vector3(9.6, 0.12, 6.5)
+size = Vector3(26.1, 0.12, 7.6)
 [sub_resource type="StandardMaterial3D" id="WaterMat"]
 albedo_color = Color(0.388235, 0.607843, 0.643137, 1)
 roughness = 0.45
-[sub_resource type="BoxMesh" id="PondMesh"]
+[sub_resource type="CylinderMesh" id="PondMesh"]
 material = SubResource("WaterMat")
-size = Vector3(2.1, 0.035, 1.6)
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.035
+radial_segments = 48
 [sub_resource type="BoxShape3D" id="GroundShape"]
-size = Vector3(9.6, 0.8, 6.5)
+size = Vector3(26.1, 0.8, 7.6)
 [sub_resource type="BoxShape3D" id="NSShape"]
-size = Vector3(9.8, 1, 0.2)
+size = Vector3(26.3, 1, 0.2)
 [sub_resource type="BoxShape3D" id="EWShape"]
-size = Vector3(0.2, 1, 6.5)
+size = Vector3(0.2, 1, 7.6)
 [sub_resource type="StandardMaterial3D" id="RockMat"]
 albedo_color = Color(0.596078, 0.631373, 0.564706, 1)
 roughness = 1.0
@@ -46,6 +51,42 @@ roughness = 1.0
 material = SubResource("PlantMat")
 radius = 0.35
 height = 0.7
+[sub_resource type="StandardMaterial3D" id="HillMat"]
+albedo_color = Color(0.25, 0.39, 0.24, 1)
+roughness = 1.0
+[sub_resource type="SphereMesh" id="HillMesh"]
+material = SubResource("HillMat")
+radius = 2.8
+height = 3.4
+[sub_resource type="StandardMaterial3D" id="TrunkMat"]
+albedo_color = Color(0.23, 0.25, 0.18, 1)
+roughness = 1.0
+[sub_resource type="CylinderMesh" id="TrunkMesh"]
+material = SubResource("TrunkMat")
+top_radius = 0.11
+bottom_radius = 0.18
+height = 2.6
+[sub_resource type="StandardMaterial3D" id="CanopyMat"]
+albedo_color = Color(0.19, 0.31, 0.2, 1)
+roughness = 1.0
+[sub_resource type="CylinderMesh" id="CanopyMesh"]
+material = SubResource("CanopyMat")
+top_radius = 0.0
+bottom_radius = 0.85
+height = 2.8
+[sub_resource type="StandardMaterial3D" id="MountainMat"]
+albedo_color = Color(0.3, 0.35, 0.34, 1)
+roughness = 1.0
+[sub_resource type="PrismMesh" id="MountainMesh"]
+material = SubResource("MountainMat")
+size = Vector3(5, 3, 1.4)
+[sub_resource type="BoxShape3D" id="ReachableShape"]
+size = Vector3(14, 0.3, 4.5)
+[sub_resource type="BoxShape3D" id="ScenicShape"]
+size = Vector3(18, 2, 2.5)
+[sub_resource type="CylinderShape3D" id="WaterRegionShape"]
+radius = 1.0
+height = 0.25
 
 [node name="Garden" type="Node3D"]
 script = ExtResource("1")
@@ -65,11 +106,119 @@ mesh = SubResource("SoilMesh")
 [node name="Grass" type="MeshInstance3D" parent="Environment/Terrain"]
 mesh = SubResource("GrassMesh")
 [node name="Pond" type="MeshInstance3D" parent="Environment"]
-position = Vector3(2.5, 0.075, -1.3)
+position = Vector3(0.8, 0.075, -2.7)
+scale = Vector3(2.55, 1, 0.72)
 mesh = SubResource("PondMesh")
+[node name="HorizonForest" type="Node3D" parent="Environment"]
+[node name="West" type="Sprite3D" parent="Environment/HorizonForest"]
+position = Vector3(-8.6, 1.5, -5.45)
+texture = ExtResource("5")
+pixel_size = 0.0085
+billboard = 1
+alpha_cut = 2
+[node name="Center" type="Sprite3D" parent="Environment/HorizonForest"]
+position = Vector3(0, 1.5, -5.45)
+texture = ExtResource("5")
+pixel_size = 0.0085
+billboard = 1
+alpha_cut = 2
+[node name="East" type="Sprite3D" parent="Environment/HorizonForest"]
+position = Vector3(8.6, 1.5, -5.45)
+texture = ExtResource("5")
+pixel_size = 0.0085
+billboard = 1
+alpha_cut = 2
+[node name="DistantMountains" type="Node3D" parent="Environment"]
+[node name="West" type="MeshInstance3D" parent="Environment/DistantMountains"]
+position = Vector3(-5.8, 1.05, -6.2)
+rotation_degrees = Vector3(0, 0, -4)
+mesh = SubResource("MountainMesh")
+[node name="Center" type="MeshInstance3D" parent="Environment/DistantMountains"]
+position = Vector3(0, 1.35, -6.5)
+scale = Vector3(1.35, 1.15, 1)
+mesh = SubResource("MountainMesh")
+[node name="East" type="MeshInstance3D" parent="Environment/DistantMountains"]
+position = Vector3(6.2, 1.0, -6.1)
+rotation_degrees = Vector3(0, 180, 3)
+mesh = SubResource("MountainMesh")
+[node name="BackHills" type="Node3D" parent="Environment"]
+[node name="WestHill" type="MeshInstance3D" parent="Environment/BackHills"]
+position = Vector3(-5.8, -0.5, -3.35)
+scale = Vector3(1.25, 0.55, 0.62)
+mesh = SubResource("HillMesh")
+[node name="CenterHill" type="MeshInstance3D" parent="Environment/BackHills"]
+position = Vector3(0, -0.65, -3.55)
+scale = Vector3(1.35, 0.45, 0.58)
+mesh = SubResource("HillMesh")
+[node name="EastHill" type="MeshInstance3D" parent="Environment/BackHills"]
+position = Vector3(6.0, -0.5, -3.3)
+scale = Vector3(1.3, 0.58, 0.65)
+mesh = SubResource("HillMesh")
+[node name="ForestEdge" type="Node3D" parent="Environment"]
+[node name="Tree1" type="Node3D" parent="Environment/ForestEdge"]
+position = Vector3(-7.8, 1.25, -3.25)
+[node name="Trunk" type="MeshInstance3D" parent="Environment/ForestEdge/Tree1"]
+mesh = SubResource("TrunkMesh")
+[node name="Canopy" type="MeshInstance3D" parent="Environment/ForestEdge/Tree1"]
+position = Vector3(0, 1.65, 0)
+mesh = SubResource("CanopyMesh")
+[node name="Tree2" type="Node3D" parent="Environment/ForestEdge"]
+position = Vector3(-5.7, 1.1, -3.6)
+scale = Vector3(0.85, 0.85, 0.85)
+[node name="Trunk" type="MeshInstance3D" parent="Environment/ForestEdge/Tree2"]
+mesh = SubResource("TrunkMesh")
+[node name="Canopy" type="MeshInstance3D" parent="Environment/ForestEdge/Tree2"]
+position = Vector3(0, 1.65, 0)
+mesh = SubResource("CanopyMesh")
+[node name="Tree3" type="Node3D" parent="Environment/ForestEdge"]
+position = Vector3(-3.5, 1.2, -3.45)
+[node name="Trunk" type="MeshInstance3D" parent="Environment/ForestEdge/Tree3"]
+mesh = SubResource("TrunkMesh")
+[node name="Canopy" type="MeshInstance3D" parent="Environment/ForestEdge/Tree3"]
+position = Vector3(0, 1.65, 0)
+mesh = SubResource("CanopyMesh")
+[node name="Tree4" type="Node3D" parent="Environment/ForestEdge"]
+position = Vector3(4.2, 1.2, -3.5)
+[node name="Trunk" type="MeshInstance3D" parent="Environment/ForestEdge/Tree4"]
+mesh = SubResource("TrunkMesh")
+[node name="Canopy" type="MeshInstance3D" parent="Environment/ForestEdge/Tree4"]
+position = Vector3(0, 1.65, 0)
+mesh = SubResource("CanopyMesh")
+[node name="Tree5" type="Node3D" parent="Environment/ForestEdge"]
+position = Vector3(6.4, 1.1, -3.65)
+scale = Vector3(0.88, 0.88, 0.88)
+[node name="Trunk" type="MeshInstance3D" parent="Environment/ForestEdge/Tree5"]
+mesh = SubResource("TrunkMesh")
+[node name="Canopy" type="MeshInstance3D" parent="Environment/ForestEdge/Tree5"]
+position = Vector3(0, 1.65, 0)
+mesh = SubResource("CanopyMesh")
+[node name="Tree6" type="Node3D" parent="Environment/ForestEdge"]
+position = Vector3(8.0, 1.25, -3.3)
+[node name="Trunk" type="MeshInstance3D" parent="Environment/ForestEdge/Tree6"]
+mesh = SubResource("TrunkMesh")
+[node name="Canopy" type="MeshInstance3D" parent="Environment/ForestEdge/Tree6"]
+position = Vector3(0, 1.65, 0)
+mesh = SubResource("CanopyMesh")
+[node name="ForegroundFrame" type="Node3D" parent="Environment"]
+[node name="WestTree" type="Node3D" parent="Environment/ForegroundFrame"]
+position = Vector3(-10.3, 1.55, 2.0)
+scale = Vector3(1.35, 1.35, 1.35)
+[node name="Trunk" type="MeshInstance3D" parent="Environment/ForegroundFrame/WestTree"]
+mesh = SubResource("TrunkMesh")
+[node name="Canopy" type="MeshInstance3D" parent="Environment/ForegroundFrame/WestTree"]
+position = Vector3(0, 1.65, 0)
+mesh = SubResource("CanopyMesh")
+[node name="EastTree" type="Node3D" parent="Environment/ForegroundFrame"]
+position = Vector3(10.3, 1.55, 2.0)
+scale = Vector3(1.35, 1.35, 1.35)
+[node name="Trunk" type="MeshInstance3D" parent="Environment/ForegroundFrame/EastTree"]
+mesh = SubResource("TrunkMesh")
+[node name="Canopy" type="MeshInstance3D" parent="Environment/ForegroundFrame/EastTree"]
+position = Vector3(0, 1.65, 0)
+mesh = SubResource("CanopyMesh")
 [node name="Decorations" type="Node3D" parent="Environment"]
 [node name="RockLeft" type="MeshInstance3D" parent="Environment/Decorations"]
-position = Vector3(-3.5, 0.18, -2.5)
+position = Vector3(-6.7, 0.18, -2.5)
 rotation_degrees = Vector3(0, 26, 8)
 mesh = SubResource("RockMesh")
 [node name="RockCenter" type="MeshInstance3D" parent="Environment/Decorations"]
@@ -77,16 +226,17 @@ position = Vector3(-0.8, 0.16, 2.65)
 rotation_degrees = Vector3(5, 58, 0)
 scale = Vector3(1.3, 0.8, 1)
 mesh = SubResource("RockMesh")
+visible = false
 [node name="RockPond" type="MeshInstance3D" parent="Environment/Decorations"]
-position = Vector3(3.65, 0.2, -2.2)
+position = Vector3(3.65, 0.2, -2.85)
 rotation_degrees = Vector3(0, -18, -5)
 scale = Vector3(1.15, 1.2, 1)
 mesh = SubResource("RockMesh")
 [node name="PlantLeft" type="MeshInstance3D" parent="Environment/Decorations"]
-position = Vector3(-3.9, 0.35, -2.4)
+position = Vector3(-7.1, 0.35, -2.4)
 mesh = SubResource("PlantMesh")
 [node name="PlantRight" type="MeshInstance3D" parent="Environment/Decorations"]
-position = Vector3(3.8, 0.35, -2.45)
+position = Vector3(7.5, 0.35, -2.45)
 mesh = SubResource("PlantMesh")
 [node name="PlantBack" type="MeshInstance3D" parent="Environment/Decorations"]
 position = Vector3(-2.4, 0.35, -2.65)
@@ -97,19 +247,44 @@ mesh = SubResource("PlantMesh")
 position = Vector3(0, -0.42, 0)
 shape = SubResource("GroundShape")
 [node name="NorthBoundary" type="CollisionShape3D" parent="Collisions"]
-position = Vector3(0, 0.5, -3.25)
+position = Vector3(0, 0.5, -3.8)
 shape = SubResource("NSShape")
 [node name="SouthBoundary" type="CollisionShape3D" parent="Collisions"]
-position = Vector3(0, 0.5, 3.25)
+position = Vector3(0, 0.5, 3.8)
 shape = SubResource("NSShape")
 [node name="WestBoundary" type="CollisionShape3D" parent="Collisions"]
-position = Vector3(-4.8, 0.5, 0)
+position = Vector3(-13.05, 0.5, 0)
 shape = SubResource("EWShape")
 [node name="EastBoundary" type="CollisionShape3D" parent="Collisions"]
-position = Vector3(4.8, 0.5, 0)
+position = Vector3(13.05, 0.5, 0)
 shape = SubResource("EWShape")
 
 [node name="Interactables" type="Node3D" parent="."]
+[node name="PlacementRegions" type="Node3D" parent="."]
+[node name="ReachableMeadow" type="Area3D" parent="PlacementRegions"]
+position = Vector3(0, 0.1, 0.15)
+monitoring = false
+monitorable = false
+metadata/_purpose = "Future item placement: reachable ground"
+[node name="Shape" type="CollisionShape3D" parent="PlacementRegions/ReachableMeadow"]
+shape = SubResource("ReachableShape")
+[node name="ScenicBackline" type="Area3D" parent="PlacementRegions"]
+position = Vector3(0, 0.8, -3.15)
+monitoring = false
+monitorable = false
+metadata/_purpose = "Scenery only: placement and inhabitants excluded"
+[node name="Shape" type="CollisionShape3D" parent="PlacementRegions/ScenicBackline"]
+shape = SubResource("ScenicShape")
+[node name="Water" type="Area3D" parent="PlacementRegions"]
+position = Vector3(0.8, 0.05, -2.7)
+scale = Vector3(2.55, 1, 0.72)
+monitoring = false
+monitorable = false
+metadata/surface_type = "water"
+metadata/traversable_by_pixies = true
+metadata/_purpose = "Future surface response and item placement rules"
+[node name="Shape" type="CollisionShape3D" parent="PlacementRegions/Water"]
+shape = SubResource("WaterRegionShape")
 [node name="PixySpawns" type="Node3D" parent="."]
 [node name="Earth" type="Marker3D" parent="PixySpawns"]
 position = Vector3(-2.4, 0.65, 0.5)
@@ -122,16 +297,10 @@ position = Vector3(2.4, 0.65, 0.5)
 [node name="Pixies" type="Node3D" parent="."]
 
 [node name="CameraRig" type="Node3D" parent="."]
-[node name="Viewpoints" type="Node3D" parent="CameraRig"]
-[node name="Right" type="Marker3D" parent="CameraRig/Viewpoints"]
-position = Vector3(8, 8, 11)
-[node name="Left" type="Marker3D" parent="CameraRig/Viewpoints"]
-position = Vector3(-8, 8, 11)
-[node name="High" type="Marker3D" parent="CameraRig/Viewpoints"]
-position = Vector3(0, 10, 10)
+script = ExtResource("4")
+horizontal_limits = Vector2(-6.5, 6.5)
 [node name="Camera3D" type="Camera3D" parent="CameraRig"]
-position = Vector3(8, 8, 11)
-rotation_degrees = Vector3(-32.9, 36, 0)
-projection = 1
-size = 13.2
+position = Vector3(0, 4.4, 9)
+rotation_degrees = Vector3(-25.5, 180, 0)
+fov = 43.0
 [node name="GardenUI" parent="." instance=ExtResource("3")]

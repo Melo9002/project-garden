@@ -19,7 +19,7 @@ func advance(delta: float) -> void:
 			pixy.idle_remaining -= delta
 			continue
 		if pixy.position.distance_to(pixy.target) < 0.05:
-			pixy.target = Vector2(random.randf_range(-3.7, 3.7), random.randf_range(-2.2, 2.2))
+			pixy.target = Vector2(random.randf_range(-7.0, 7.0), random.randf_range(-2.4, 2.1))
 			pixy.idle_remaining = random.randf_range(1.0, 3.0)
 		else:
 			pixy.position = pixy.position.move_toward(pixy.target, delta * 0.38)

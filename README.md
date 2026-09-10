@@ -10,10 +10,12 @@ The vision is a quiet living diorama: tend mysterious pixies, shape their enviro
 
 Implemented:
 
-- One editor-visible 3D garden with a decorative pond, rocks, plants, collisions, spawn markers, and camera viewpoints.
-- Four geometric placeholder pixies representing Earth, Fire, Wind, and Water.
+- One editor-visible 3D garden with a traversable decorative pond, rocks, plants, collisions, spawn markers, placement regions, and a bounded camera rig.
+- Layered 3D scenery and a 2D horizon forest create perspective parallax; oversized ground and foreground vegetation hide the map edges.
+- Four replaceable 2D billboard placeholder pixies representing Earth, Fire, Wind, and Water.
+- Click selection with a visible ring and a compact live identity/activity inspector.
 - Independent wandering, idling, and gentle hovering.
-- Three fixed camera viewpoints and pause/resume controls.
+- Smooth bounded perspective camera with keyboard/drag panning, wheel zoom, three quick stops, and pause/resume controls.
 - Separate simulation state and visual presentation.
 
 The current build tests the feel of observing a small inhabited space. Creature care, social interactions, evolution, saving, and the illustrated pixie sprites are not implemented yet. The pond is visual scenery; pixies can move across it.

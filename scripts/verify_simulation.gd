@@ -10,7 +10,7 @@ func _init() -> void:
 		second.advance(1.0 / 30.0)
 		for i in range(4):
 			var pos := first.pixies[i].position
-			assert(absf(pos.x) <= 3.7 and absf(pos.y) <= 2.2, "Pixie escaped movement bounds")
+			assert(absf(pos.x) <= 7.0 and pos.y >= -2.4 and pos.y <= 2.1, "Pixie escaped movement bounds")
 			assert(pos == second.pixies[i].position, "Seeded runs diverged")
 	first.pixies[0].location_id = "test_location"
 	assert(first.pixies[1].location_id == "first_garden", "Individual state was shared")
