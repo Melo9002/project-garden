@@ -1,0 +1,16 @@
+config_version=5
+
+[application]
+config/name="Project Garden"
+run/main_scene="res://scenes/garden.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[display]
+window/size/viewport_width=1152
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.10, 0.15, 0.19, 1)
+
