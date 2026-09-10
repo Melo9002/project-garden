@@ -7,7 +7,7 @@ script = ExtResource("1")
 offset_left = 24.0
 offset_top = 24.0
 offset_right = 318.0
-offset_bottom = 218.0
+offset_bottom = 260.0
 [node name="Margin" type="MarginContainer" parent="Panel"]
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
@@ -26,6 +26,9 @@ text = "OBSERVING  ·  00:00"
 text = "Pause / resume"
 [node name="ViewpointButton" type="Button" parent="Panel/Margin/Column"]
 text = "Next garden stop"
+
+[node name="FlowerButton" type="Button" parent="Panel/Margin/Column"]
+text = "Place flower patch"
 
 [node name="Controls" type="Label" parent="."]
 anchors_preset = 3

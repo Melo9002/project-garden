@@ -4,7 +4,7 @@
 - Camera/environment follow-up: implemented a smooth bounded side-scrolling perspective camera, keyboard and drag panning, wheel zoom, three quick stops, a camera-position strip, wider layered nature scenery, billboard pixy placeholders and authored future placement regions. GPU capture and headless checks passed; hands-on control feel still needs Pedro's playtest.
 - Endless-map illusion follow-up: implemented oversized hidden terrain, foreground edge framing, a 2D distant-forest band with perspective parallax, an organic oval pond and a semantic traversable-water region. Keep procedural environment generation as a later experiment after this authored test map has been validated.
 - Batch 002: 2D placeholder sprite integration and individual selection/inspection implemented. Each pixy has a forgiving click volume, hover emphasis, selection ring, and a live inspector showing element, mood and activity. GPU layout and startup validation passed; Pedro's click/readability playtest remains.
-- Batch 003: care controls plus visible environmental and social responses, four emotes and one friendly interaction.
+- Batch 003: in progress. First vertical slice implemented: place one authored flower patch with green/red validity feedback; water and out-of-bounds ground reject it; nearby pixies show a five-second curious mood and `?` reaction. Still needed: persistent environmental influence, remaining reaction types and one friendly social interaction.
 - Batch 004: shared pupal stage, one development milestone and save/load.
 - Batch 005: playtest adjustments, Pedro's replacement art, export verification. Publication separately authorized.
 - Later: second location to validate architecture, planets; possible v0.2 ship assistant.

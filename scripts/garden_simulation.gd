@@ -15,6 +15,10 @@ func _init() -> void:
 func advance(delta: float) -> void:
 	elapsed += delta
 	for pixy in pixies:
+		if pixy.mood_remaining > 0.0:
+			pixy.mood_remaining -= delta
+			if pixy.mood_remaining <= 0.0:
+				pixy.mood = "Settled"
 		if pixy.idle_remaining > 0.0:
 			pixy.idle_remaining -= delta
 			continue
@@ -23,4 +27,9 @@ func advance(delta: float) -> void:
 			pixy.idle_remaining = random.randf_range(1.0, 3.0)
 		else:
 			pixy.position = pixy.position.move_toward(pixy.target, delta * 0.38)
+
+func notice_flower(ground_position: Vector2, notice_radius: float = 2.4) -> void:
+	for pixy in pixies:
+		if pixy.position.distance_to(ground_position) <= notice_radius:
+			pixy.set_temporary_mood("Curious about flowers", 5.0)
 

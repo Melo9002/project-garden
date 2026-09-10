@@ -14,6 +14,7 @@ Implemented:
 - Layered 3D scenery and a 2D horizon forest create perspective parallax; oversized ground and foreground vegetation hide the map edges.
 - Four replaceable 2D billboard placeholder pixies representing Earth, Fire, Wind, and Water.
 - Click selection with a visible ring and a compact live identity/activity inspector.
+- One experimental flower-placement interaction with dry-ground validation and nearby pixy curiosity.
 - Independent wandering, idling, and gentle hovering.
 - Smooth bounded perspective camera with keyboard/drag panning, wheel zoom, three quick stops, and pause/resume controls.
 - Separate simulation state and visual presentation.

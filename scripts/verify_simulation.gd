@@ -14,5 +14,10 @@ func _init() -> void:
 			assert(pos == second.pixies[i].position, "Seeded runs diverged")
 	first.pixies[0].location_id = "test_location"
 	assert(first.pixies[1].location_id == "first_garden", "Individual state was shared")
+	var flower_position := first.pixies[0].position
+	first.notice_flower(flower_position, 0.1)
+	assert(first.pixies[0].mood == "Curious about flowers", "Nearby pixy missed flower reaction")
+	first.advance(5.1)
+	assert(first.pixies[0].mood == "Settled", "Temporary mood did not expire")
 	print("PASS: 18000 ticks; bounds, reproducibility, independent state")
 	quit()

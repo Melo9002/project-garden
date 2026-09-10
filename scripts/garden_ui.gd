@@ -3,6 +3,7 @@ extends CanvasLayer
 
 signal pause_requested
 signal viewpoint_requested
+signal flower_placement_requested
 @onready var status: Label = $Panel/Margin/Column/Status
 @onready var camera_marker: ColorRect = $CameraTrack/Marker
 @onready var pixy_name: Label = $PixyInspector/Margin/Column/Name
@@ -11,6 +12,7 @@ signal viewpoint_requested
 func _ready() -> void:
 	$Panel/Margin/Column/PauseButton.pressed.connect(pause_requested.emit)
 	$Panel/Margin/Column/ViewpointButton.pressed.connect(viewpoint_requested.emit)
+	$Panel/Margin/Column/FlowerButton.pressed.connect(flower_placement_requested.emit)
 
 func set_status(text: String) -> void:
 	status.text = text

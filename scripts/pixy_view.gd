@@ -10,6 +10,7 @@ signal selected(view: PixyView)
 @onready var sprite: Sprite3D = $Body/Sprite3D
 @onready var name_label: Label3D = $NameLabel
 @onready var selection_ring: MeshInstance3D = $SelectionRing
+@onready var reaction_label: Label3D = $ReactionLabel
 var phase: float = 0.0
 var selected_now := false
 var pointer_over := false
@@ -24,6 +25,7 @@ func sync(state: PixyState, time: float) -> void:
 	body.position.y = sin(time * hover_speed + phase) * hover_amplitude
 	var emphasis := 1.08 if selected_now else (1.04 if pointer_over else 1.0)
 	body.scale = Vector3.ONE * emphasis
+	reaction_label.text = "?" if state.mood == "Curious about flowers" else ""
 
 func set_selected(value: bool) -> void:
 	selected_now = value

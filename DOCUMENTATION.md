@@ -25,13 +25,20 @@ The pond is a flat colored surface and does not currently affect navigation. Roc
 
 `PlacementRegions/Water` records `surface_type = "water"` and `traversable_by_pixies = true`. It is currently documentation in the scene rather than active behavior. A later surface-query contract can use this region to select hover, wade, swim or ripple presentation without turning the pond into a movement obstacle.
 
+## First placement and reaction slice
+`flower_patch.tscn` is a reusable authored object containing its flower geometry and separate valid/invalid preview rings. Its small `flower_patch.gd` script only switches preview presentation; it has no knowledge of the garden or pixies.
+
+`GardenPlacement` owns the current one-object placement interaction. The flower button begins a preview, a camera ray places it against existing collision geometry, left click confirms, and Escape or right click cancels. Inspector-exposed reachable bounds and water ellipse provide deliberately simple validation. They mirror authored placement regions for this experiment; a later multi-surface system should replace these numeric rules rather than accumulate more special cases.
+
+After confirmation, `GardenPlacement` emits the flower's 2D ground position. `GardenSimulation.notice_flower()` applies a temporary curious mood to nearby states. `PixyView` renders the semantic mood as a `?`, while the inspector displays its text. The simulation test verifies both the nearby reaction and automatic return to `Settled` after five simulated seconds.
+
 The perspective camera travels horizontally within authored limits; no free camera exists. `garden_ui.tscn` owns the complete Control layout and `garden_ui.gd` emits semantic button signals or presents supplied state. The garden connects those signals to simulation/camera behavior. Selection exists, but social behavior, changing moods, environment needs, evolution, audio and persistence do not yet.
 
 ## Verification
 Import: `godot --headless --path . --editor --import --quit`
 Smoke run: `godot --headless --path . --quit-after 180`
 Simulation contract check: `godot --headless --path . --script res://scripts/verify_simulation.gd` (passed 18,000 ticks for bounds, reproducibility and independent state).
-Human check: F5, observe all four labels, pause/resume, switch all three viewpoints. Actual GPU appearance and interaction require a visual playtest; a headless run alone does not establish them.
+Human check: F5, observe all four labels, pause/resume, test camera controls, select moving pixies, and place/cancel flowers over dry ground, water and outside bounds. Actual GPU appearance and interaction require a visual playtest; a headless run alone does not establish them.
 
 For restricted tool runs, APPDATA and LOCALAPPDATA may be redirected for that process into workspace scratch directories to avoid writing global editor state. Normal desktop use needs no such redirection.
 

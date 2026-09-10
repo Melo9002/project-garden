@@ -8,6 +8,7 @@ extends Node3D
 @onready var spawn_container: Node3D = $PixySpawns
 @onready var camera_rig: GardenCamera = $CameraRig
 @onready var ui: CanvasLayer = $GardenUI
+@onready var placement: GardenPlacement = $GardenPlacement
 
 var simulation := GardenSimulation.new()
 var views: Array[PixyView] = []
@@ -23,6 +24,8 @@ func _ready() -> void:
 	_spawn_pixy_views()
 	ui.pause_requested.connect(_toggle_pause)
 	ui.viewpoint_requested.connect(_next_viewpoint)
+	ui.flower_placement_requested.connect(placement.begin_flower_placement)
+	placement.flower_placed.connect(_on_flower_placed)
 	camera_rig.position_changed.connect(ui.set_camera_position)
 	camera_rig.focus_normalized(0.5)
 
@@ -64,6 +67,9 @@ func _select_pixy(chosen_view: PixyView) -> void:
 	for i in range(views.size()):
 		views[i].set_selected(i == selected_index)
 	ui.show_pixy(simulation.pixies[selected_index])
+
+func _on_flower_placed(ground_position: Vector2) -> void:
+	simulation.notice_flower(ground_position)
 
 func _toggle_pause() -> void:
 	paused = not paused

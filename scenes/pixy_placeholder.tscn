@@ -35,6 +35,14 @@ pixel_size = 0.007
 billboard = 1
 modulate = Color(0.95, 0.96, 0.85, 1)
 
+[node name="ReactionLabel" type="Label3D" parent="."]
+position = Vector3(0.38, 0.52, 0)
+font_size = 54
+pixel_size = 0.009
+billboard = 1
+outline_size = 10
+modulate = Color(1, 0.88, 0.42, 1)
+
 [node name="SelectionRing" type="MeshInstance3D" parent="."]
 position = Vector3(0, -0.55, 0)
 mesh = SubResource("SelectionMesh")

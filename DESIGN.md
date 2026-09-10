@@ -12,6 +12,8 @@ The first clearing now uses an oversized ground plane, foreground trees, 3D midg
 ## Planned experiments
 Environmental change should produce readable behavior and reaction faces. Start with four reactions: happy, unamused, curious, distressed. Test one friendly social encounter. Cooldowns prevent reaction spam; presentation consumes semantic reaction events rather than deciding simulation rules.
 
+The first care experiment is implemented narrowly: the player can preview and place a flower patch on reachable dry meadow. A green or red ring communicates validity; the pond and outside bounds reject placement. Pixies within 2.4 world units become `Curious about flowers` for five simulated seconds and display a `?`. Flowers do not yet exert persistent influence, change elemental values, attract movement or save with the garden.
+
 Shared pupal form develops toward four elemental forms. Exact evolution thresholds remain undecided. Temperature, water and light are provisional controls, not verified PS1 mechanics. No mortality or food rules are assumed.
 
 ## Presentation

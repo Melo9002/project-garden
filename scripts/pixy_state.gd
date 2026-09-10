@@ -9,6 +9,7 @@ var position: Vector2
 var target: Vector2
 var idle_remaining: float = 0.0
 var mood: String = "Settled"
+var mood_remaining: float = 0.0
 
 func _init(identity: String, kind: String, start: Vector2) -> void:
 	id = identity
@@ -20,4 +21,8 @@ func get_activity() -> String:
 	if idle_remaining > 0.0:
 		return "Taking in the garden"
 	return "Wandering"
+
+func set_temporary_mood(value: String, duration: float) -> void:
+	mood = value
+	mood_remaining = duration
 
