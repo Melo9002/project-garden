@@ -5,9 +5,7 @@ extends Node3D
 signal flower_placed(ground_position: Vector2)
 
 @export var flower_scene: PackedScene
-@export var reachable_bounds := Rect2(-7.0, -2.4, 14.0, 4.5)
-@export var water_center := Vector2(0.8, -2.7)
-@export var water_radius := Vector2(2.55, 0.72)
+@export var garden_definition: GardenDefinition
 @onready var camera: Camera3D = $"../CameraRig/Camera3D"
 @onready var placed_objects: Node3D = $"../Interactables"
 
@@ -15,6 +13,7 @@ var preview: FlowerPatch
 var placement_valid := false
 
 func begin_flower_placement() -> void:
+	assert(garden_definition != null, "GardenPlacement requires a GardenDefinition")
 	cancel_placement()
 	preview = flower_scene.instantiate() as FlowerPatch
 	assert(preview != null, "Flower scene must use FlowerPatch at its root")
@@ -35,7 +34,7 @@ func _process(_delta: float) -> void:
 	preview.visible = true
 	var point: Vector3 = hit.position
 	preview.global_position = Vector3(point.x, 0.12, point.z)
-	placement_valid = _is_valid_ground(Vector2(point.x, point.z))
+	placement_valid = garden_definition.can_place_flower(Vector2(point.x, point.z))
 	preview.show_placement_preview(placement_valid)
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -54,6 +53,17 @@ func cancel_placement() -> void:
 		preview.queue_free()
 		preview = null
 
+func restore_flowers(positions: Array[Vector2]) -> void:
+	for child in placed_objects.get_children():
+		if child is FlowerPatch:
+			child.queue_free()
+	for ground_position in positions:
+		var flower := flower_scene.instantiate() as FlowerPatch
+		assert(flower != null, "Flower scene must use FlowerPatch at its root")
+		placed_objects.add_child(flower)
+		flower.position = Vector3(ground_position.x, 0.12, ground_position.y)
+		flower.finish_placement()
+
 func _place_preview() -> void:
 	var placed_position := Vector2(preview.position.x, preview.position.z)
 	remove_child(preview)
@@ -61,10 +71,3 @@ func _place_preview() -> void:
 	preview.finish_placement()
 	preview = null
 	flower_placed.emit(placed_position)
-
-func _is_valid_ground(point: Vector2) -> bool:
-	if not reachable_bounds.has_point(point):
-		return false
-	var lake_distance := (point - water_center) / water_radius
-	return lake_distance.length_squared() > 1.0
-

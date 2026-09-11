@@ -6,9 +6,13 @@
 `Garden` owns one `GardenSimulation` and an ordered array of runtime `PixyView` instances created from `pixy_placeholder.tscn`. Runtime creation is appropriate here because the simulation determines the active individuals. Their reusable visual structure remains editor-visible in its own scene. The simulation owns individual `PixyState` RefCounted objects. Views do not own or mutate state. Tree nodes are freed with the scene; RefCounted data lives while referenced.
 
 ## Data and movement
-`pixy_state.gd`: stable identity, element label, location ID, 2D ground position/target, idle timer. X/Y in data map to X/Z in the scene. Each individual has its own object.
+`pixy_state.gd`: stable identity, element label, location ID, 2D ground position/target, idle timer, current activity, temporary presentation reaction, and normalized energy/comfort/curiosity. X/Y in data map to X/Z in the scene. Each individual has its own object. Mood and qualitative need labels are derived methods, so display text cannot become a second source of simulation truth.
 
-`garden_simulation.gd`: seeded RNG selects targets inside a fixed rectangular area and idle durations. Movement advances at 0.38 world units per second. The initial target equals position, so each pixie first picks a target and idles. No rendering, filesystem or global scene access.
+`first_garden_definition.tres` is the small editor-editable spatial contract shared by simulation and placement. Its `GardenDefinition` script stores the reachable rectangle and oval water region, classifies points as meadow, water or outside, and selects random reachable points. Water classification takes precedence where the pond extends beyond the reachable rectangle. This resource holds rules only; visual geometry remains authored in `garden.tscn` and should be kept aligned during map edits.
+
+`garden_simulation.gd`: seeded RNG asks the supplied garden definition for reachable targets and independently selects idle durations. Movement advances at 0.38 world units per second. The initial target equals position, so each pixy first picks a target and idles. No rendering, filesystem or global scene access.
+
+The daily-life rules are intentionally direct functions in `GardenSimulation`. Needs decay slowly and remain clamped from 0 to 1. Low energy chooses a timed rest. Low curiosity chooses the nearest registered flower; arrival changes the activity to enjoying flowers and restores curiosity/comfort during the idle period. Ordinary targets that fall on the water region are labeled as water investigation. This is behavior selection, not pathfinding or a general AI framework.
 
 `garden.gd`: coordinates authored nodes with the simulation. It reads the ordered `PixySpawns` markers into initial state, instantiates one configured `pixy_scene` per active state under `Pixies`, and asks `GardenCamera` to move between three normalized quick stops. It accumulates frame time and advances simulation at the Inspector-exposed `simulation_rate` (30 Hz by default). Frame delta is capped at 0.15 to avoid long catch-up after stalls: deliberately not a real-time clock. Identical seeds and tick counts reproduce movement within the same runtime; no cross-platform bitwise guarantee. Pause stops simulation and therefore hover animation. Camera/UI stay interactive.
 
@@ -28,17 +32,25 @@ The pond is a flat colored surface and does not currently affect navigation. Roc
 ## First placement and reaction slice
 `flower_patch.tscn` is a reusable authored object containing its flower geometry and separate valid/invalid preview rings. Its small `flower_patch.gd` script only switches preview presentation; it has no knowledge of the garden or pixies.
 
-`GardenPlacement` owns the current one-object placement interaction. The flower button begins a preview, a camera ray places it against existing collision geometry, left click confirms, and Escape or right click cancels. Inspector-exposed reachable bounds and water ellipse provide deliberately simple validation. They mirror authored placement regions for this experiment; a later multi-surface system should replace these numeric rules rather than accumulate more special cases.
+`GardenPlacement` owns the current one-object placement interaction. The flower button begins a preview, a camera ray places it against existing collision geometry, left click confirms, and Escape or right click cancels. It asks the shared `GardenDefinition` whether the point is meadow instead of duplicating map coordinates. A later placement catalog can add object-specific surface requirements without putting those policies into the flower scene.
 
-After confirmation, `GardenPlacement` emits the flower's 2D ground position. `GardenSimulation.notice_flower()` applies a temporary curious mood to nearby states. `PixyView` renders the semantic mood as a `?`, while the inspector displays its text. The simulation test verifies both the nearby reaction and automatic return to `Settled` after five simulated seconds.
+After confirmation, `GardenPlacement` emits the flower's 2D ground position. `GardenSimulation.notice_flower()` registers the flower and gives nearby pixies a temporary `?` reaction. `PixyView` renders that reaction while mood remains a longer-lived description derived from needs. Registered flowers can later attract curious pixies and restore curiosity and comfort.
+
+## Persistence
+`garden_save.gd` is the filesystem boundary and writes `user://garden_save.json`. `GardenSimulation.to_dictionary()` and `load_dictionary()` own the versioned data shape. Each `PixyState` serializes only plain values; scene nodes, resources and artwork never enter the save. Loading rebuilds placed flower scenes from saved ground positions. Current version 1 restores elapsed simulation time but deliberately performs no offline catch-up.
+
+## Debugging daily life
+F3 toggles `garden_ui.tscn`'s developer panel. Opening it always pauses the simulation. Its speed buttons set a multiplier used only when `garden.gd` fills the fixed-step accumulator; they do not modify `Engine.time_scale`, so camera and UI input remain normal. `Advance 1 simulated minute` runs exactly 1,800 simulation ticks at the default 30 Hz while remaining paused.
+
+The panel shows selected energy (`E`), comfort (`C`) and curiosity (`Q`) as exact normalized values. `Low energy` and `Low curiosity` set the selected value to 0.15 and make the pixy choose again immediately. Low energy should produce resting. Low curiosity should produce a flower visit when at least one flower exists. These are developer mutations and are intentionally kept out of `GardenSimulation`'s normal behavior API.
 
 The perspective camera travels horizontally within authored limits; no free camera exists. `garden_ui.tscn` owns the complete Control layout and `garden_ui.gd` emits semantic button signals or presents supplied state. The garden connects those signals to simulation/camera behavior. Selection exists, but social behavior, changing moods, environment needs, evolution, audio and persistence do not yet.
 
 ## Verification
 Import: `godot --headless --path . --editor --import --quit`
 Smoke run: `godot --headless --path . --quit-after 180`
-Simulation contract check: `godot --headless --path . --script res://scripts/verify_simulation.gd` (passed 18,000 ticks for bounds, reproducibility and independent state).
-Human check: F5, observe all four labels, pause/resume, test camera controls, select moving pixies, and place/cancel flowers over dry ground, water and outside bounds. Actual GPU appearance and interaction require a visual playtest; a headless run alone does not establish them.
+Simulation contract check: `godot --headless --path . --script res://scripts/verify_simulation.gd` (passed 18,000 ticks for surface classification, placement validity, movement/need bounds, reproducibility, independent state, temporary reactions, and save-data round trips).
+Human check: F5; press F3 and confirm it pauses; select a pixy; test exact-value updates, 1x/5x/30x, one-minute stepping, forced rest and forced flower seeking; then check ordinary selection, camera, placement, save and load. Actual GPU appearance and interaction require a visual playtest; a headless run alone does not establish them.
 
 For restricted tool runs, APPDATA and LOCALAPPDATA may be redirected for that process into workspace scratch directories to avoid writing global editor state. Normal desktop use needs no such redirection.
 

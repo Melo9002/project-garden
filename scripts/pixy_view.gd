@@ -25,7 +25,7 @@ func sync(state: PixyState, time: float) -> void:
 	body.position.y = sin(time * hover_speed + phase) * hover_amplitude
 	var emphasis := 1.08 if selected_now else (1.04 if pointer_over else 1.0)
 	body.scale = Vector3.ONE * emphasis
-	reaction_label.text = "?" if state.mood == "Curious about flowers" else ""
+	reaction_label.text = state.reaction
 
 func set_selected(value: bool) -> void:
 	selected_now = value

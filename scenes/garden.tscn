@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://0h8e041bdrtt" path="res://art/distant_forest.svg" id="5"]
 [ext_resource type="Script" uid="uid://d0eo0oref50j8" path="res://scripts/garden_placement.gd" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/flower_patch.tscn" id="7"]
+[ext_resource type="Resource" path="res://first_garden_definition.tres" id="8"]
 
 [sub_resource type="Environment" id="Env"]
 background_mode = 1
@@ -110,6 +111,7 @@ radius = 1.0
 [node name="Garden" type="Node3D" unique_id=405934778]
 script = ExtResource("1")
 pixy_scene = ExtResource("2")
+garden_definition = ExtResource("8")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=664450511]
 environment = SubResource("Env")
@@ -323,6 +325,7 @@ shape = SubResource("EWShape")
 [node name="GardenPlacement" type="Node3D" parent="." unique_id=177095109]
 script = ExtResource("6")
 flower_scene = ExtResource("7")
+garden_definition = ExtResource("8")
 
 [node name="PlacementRegions" type="Node3D" parent="." unique_id=725036149]
 

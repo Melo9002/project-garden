@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GardenDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/garden_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+reachable_bounds = Rect2(-7, -2.4, 14, 4.5)
+water_center = Vector2(0.8, -2.7)
+water_radius = Vector2(2.55, 0.72)

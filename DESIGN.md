@@ -14,6 +14,10 @@ Environmental change should produce readable behavior and reaction faces. Start 
 
 The first care experiment is implemented narrowly: the player can preview and place a flower patch on reachable dry meadow. A green or red ring communicates validity; the pond and outside bounds reject placement. Pixies within 2.4 world units become `Curious about flowers` for five simulated seconds and display a `?`. Flowers do not yet exert persistent influence, change elemental values, attract movement or save with the garden.
 
+The daily-life foundation gives every pixy energy, comfort and curiosity in a normalized 0–1 range. The inspector deliberately translates these into qualitative words. Mood is derived from the three needs. Pixies wander, rest when tired, investigate water when a wandering target overlaps it, and seek the nearest flower when curiosity becomes low. Rest restores energy; time near flowers restores curiosity and comfort. These rates are provisional and gentle: there is no death, sickness or permanent neglect consequence.
+
+Save/load stores simulation data as readable JSON: elapsed garden time, deterministic RNG state, each pixy's state and placed flower positions. It does not currently advance time while the game is closed.
+
 Shared pupal form develops toward four elemental forms. Exact evolution thresholds remain undecided. Temperature, water and light are provisional controls, not verified PS1 mechanics. No mortality or food rules are assumed.
 
 ## Presentation

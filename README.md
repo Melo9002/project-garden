@@ -15,11 +15,14 @@ Implemented:
 - Four replaceable 2D billboard placeholder pixies representing Earth, Fire, Wind, and Water.
 - Click selection with a visible ring and a compact live identity/activity inspector.
 - One experimental flower-placement interaction with dry-ground validation and nearby pixy curiosity.
+- Gentle energy, comfort and curiosity needs with autonomous resting, water investigation and flower visits.
+- Readable JSON save/load for individual pixies, placed flowers, elapsed time and deterministic simulation state.
+- F3 developer panel with exact needs, accelerated simulation, minute stepping and forced behavior-test conditions.
 - Independent wandering, idling, and gentle hovering.
 - Smooth bounded perspective camera with keyboard/drag panning, wheel zoom, three quick stops, and pause/resume controls.
 - Separate simulation state and visual presentation.
 
-The current build tests the feel of observing a small inhabited space. Creature care, social interactions, evolution, saving, and the illustrated pixie sprites are not implemented yet. The pond is visual scenery; pixies can move across it.
+The current build tests the feel of observing and gently influencing a small inhabited space. Social interactions, evolution, offline progress and final illustrated pixie sprites are not implemented yet. The pond is traversable scenery; pixies can hover across it.
 
 ## Run the project
 
@@ -67,9 +70,11 @@ The code keeps individual state and simulation rules independent of scene nodes 
 | `scenes/pixy_placeholder.tscn` | Reusable temporary pixy visual |
 | `scripts/garden.gd` | Fixed-step scheduling and scene/simulation coordination |
 | `scripts/garden_ui.gd` | UI signals and status presentation |
-| `scripts/garden_simulation.gd` | Seeded movement and idle rules |
-| `scripts/pixy_state.gd` | Each pixie's identity, location, and movement state |
+| `scripts/garden_definition.gd` | Shared meadow, water, and placement rules for one garden |
+| `scripts/garden_simulation.gd` | Seeded movement, daily needs, activities, and snapshot data |
+| `scripts/pixy_state.gd` | Each pixy's identity, needs, activity, and movement state |
 | `scripts/pixy_view.gd` | Temporary geometry, labels, and cosmetic hovering |
+| `scripts/garden_save.gd` | Plain JSON persistence boundary |
 | `scripts/verify_simulation.gd` | Headless simulation contract checks |
 
 ## Checks
