@@ -20,8 +20,10 @@ func setup(kind: String, tint: Color, offset: float) -> void:
 	name_label.text = kind
 	sprite.modulate = tint.lightened(0.18)
 
-func sync(state: PixyState, time: float) -> void:
-	position = Vector3(state.position.x, 0.65, state.position.y)
+func sync(state: PixyState, time: float, surface_height: float = 0.06, over_water: bool = false) -> void:
+	position = Vector3(state.position.x, surface_height + 0.59, state.position.y)
+	$WaterRipple.visible = over_water
+	$WaterRipple.scale = Vector3.ONE * (0.8 + 0.2 * sin(time * 2.0 + phase))
 	body.position.y = sin(time * hover_speed + phase) * hover_amplitude
 	var emphasis := 1.08 if selected_now else (1.04 if pointer_over else 1.0)
 	body.scale = Vector3.ONE * emphasis

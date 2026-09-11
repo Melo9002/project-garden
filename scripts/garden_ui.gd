@@ -37,12 +37,14 @@ func set_camera_position(normalized_position: float) -> void:
 
 func show_pixy(state: PixyState) -> void:
 	pixy_name.text = state.element
-	pixy_details.text = "Mood       %s\nActivity    %s\nEnergy      %s\nComfort     %s\nCuriosity   %s" % [
+	pixy_details.text = "Mood       %s\nActivity    %s\nEnergy      %s\nComfort     %s\nCuriosity   %s\n%s affinity  %s" % [
 		state.get_mood(),
 		state.get_activity(),
 		state.describe_need(state.energy),
 		state.describe_need(state.comfort),
 		state.describe_need(state.curiosity),
+		state.element,
+		state.describe_need(state.affinity_energy()),
 	]
 
 func show_notice(text: String) -> void:
@@ -51,17 +53,33 @@ func show_notice(text: String) -> void:
 func set_debug_visible(value: bool) -> void:
 	$DebugPanel.visible = value
 
-func update_debug(elapsed: float, speed: float, paused: bool, selected: PixyState) -> void:
+func set_garden_energy(current: Dictionary, targets: Dictionary) -> void:
+	$GardenEnergy/Margin/Values.text = "EARTH  %3d / %3d\nFIRE     %3d / %3d\nWIND    %3d / %3d\nWATER %3d / %3d" % [
+		int(float(current["Earth"]) * 100.0), int(float(targets["Earth"]) * 100.0),
+		int(float(current["Fire"]) * 100.0), int(float(targets["Fire"]) * 100.0),
+		int(float(current["Wind"]) * 100.0), int(float(targets["Wind"]) * 100.0),
+		int(float(current["Water"]) * 100.0), int(float(targets["Water"]) * 100.0),
+	]
+
+func update_debug(elapsed: float, speed: float, paused: bool, selected: PixyState, garden_energy: Dictionary) -> void:
 	var run_state := "PAUSED" if paused else "RUNNING %.0fx" % speed
-	$DebugPanel/Margin/Column/RunState.text = "%s  ·  SIM %.1fs" % [run_state, elapsed]
+	$DebugPanel/Margin/Column/RunState.text = "%s · SIM %.1fs\nGARDEN Ea %.3f Fi %.3f Wi %.3f Wa %.3f" % [
+		run_state, elapsed,
+		float(garden_energy["Earth"]), float(garden_energy["Fire"]),
+		float(garden_energy["Wind"]), float(garden_energy["Water"]),
+	]
 	if selected == null:
 		$DebugPanel/Margin/Column/RawValues.text = "Select a pixy to inspect exact values."
 	else:
-		$DebugPanel/Margin/Column/RawValues.text = "%s  E %.3f  C %.3f  Q %.3f\n%s" % [
+		$DebugPanel/Margin/Column/RawValues.text = "%s  NEEDS: E %.3f C %.3f Q %.3f\nELEMENT: Ea %.3f F %.3f Wi %.3f Wa %.3f\n%s" % [
 			selected.element,
 			selected.energy,
 			selected.comfort,
 			selected.curiosity,
+			float(selected.elemental_energy["Earth"]),
+			float(selected.elemental_energy["Fire"]),
+			float(selected.elemental_energy["Wind"]),
+			float(selected.elemental_energy["Water"]),
 			selected.activity,
 		]
 

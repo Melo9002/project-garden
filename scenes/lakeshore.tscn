@@ -1,0 +1,667 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://shaders/meadow.gdshader" id="grass"]
+[ext_resource type="Shader" path="res://shaders/lake.gdshader" id="water"]
+[ext_resource type="PackedScene" path="res://scenes/shore_pine.tscn" id="pine"]
+[ext_resource type="Texture2D" path="res://art/lakeshore_forest.svg" id="forest"]
+[ext_resource type="Texture2D" path="res://art/lakeshore_ridges.svg" id="ridges"]
+[ext_resource type="Texture2D" path="res://art/shore_grass.svg" id="tuft"]
+
+[sub_resource type="ShaderMaterial" id="Grass"]
+shader = ExtResource("grass")
+[sub_resource type="ShaderMaterial" id="Water"]
+shader = ExtResource("water")
+[sub_resource type="PlaneMesh" id="LakePlane"]
+material = SubResource("Water")
+size = Vector2(120, 120)
+[sub_resource type="SphereMesh" id="Hill"]
+material = SubResource("Grass")
+radius = 4.0
+height = 3.4
+radial_segments = 40
+rings = 20
+[sub_resource type="StandardMaterial3D" id="Stone"]
+albedo_color = Color(0.39, 0.44, 0.37, 1)
+roughness = 0.95
+[sub_resource type="SphereMesh" id="Rock"]
+material = SubResource("Stone")
+radius = 0.55
+height = 0.8
+radial_segments = 7
+rings = 4
+[sub_resource type="StandardMaterial3D" id="LilyGreen"]
+albedo_color = Color(0.32, 0.45, 0.27, 1)
+roughness = 0.85
+[sub_resource type="CylinderMesh" id="LilyPad"]
+material = SubResource("LilyGreen")
+top_radius = 0.22
+bottom_radius = 0.22
+height = 0.014
+radial_segments = 12
+[sub_resource type="StandardMaterial3D" id="FlowerCream"]
+albedo_color = Color(0.92, 0.81, 0.65, 1)
+[sub_resource type="SphereMesh" id="LilyFlower"]
+material = SubResource("FlowerCream")
+radius = 0.06
+height = 0.085
+radial_segments = 7
+rings = 4
+
+[node name="Lakeshore" type="Node3D"]
+metadata/authoring = "Static scenery. Shore points match first_garden_definition.tres; verify_lakeshore.gd checks this contract."
+
+[node name="Meadow" type="CSGPolygon3D" parent="."]
+position = Vector3(0, -0.38, 0)
+rotation_degrees = Vector3(90, 0, 0)
+polygon = PackedVector2Array(-40, -50, 40, -50, 40, 1.9, 8, 1.9, 5, 1.6, 2, 2.1, -1, 1.5, -4, 1.8, -7, 1.4, -10, 1.8, -40, 1.8)
+depth = 0.44
+material = SubResource("Grass")
+
+[node name="ForegroundLake" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.16, 8)
+mesh = SubResource("LakePlane")
+cast_shadow = 0
+
+[node name="DistantRidges" type="Sprite3D" parent="."]
+position = Vector3(0, 0.4, -46)
+scale = Vector3(1, 0.55, 1)
+pixel_size = 0.045
+texture = ExtResource("ridges")
+shaded = false
+alpha_cut = 1
+cast_shadow = 0
+no_depth_test = false
+
+[node name="ForestLayers" type="Node3D" parent="."]
+
+[node name="Layer0" type="Sprite3D" parent="ForestLayers"]
+position = Vector3(-3, 2.425, -32)
+scale = Vector3(1.7, 0.6, 1)
+pixel_size = 0.025
+texture = ExtResource("forest")
+modulate = Color(0.43, 0.58, 0.57, 1)
+shaded = false
+alpha_cut = 1
+cast_shadow = 0
+
+[node name="Layer1" type="Sprite3D" parent="ForestLayers"]
+position = Vector3(6, 1.96, -24)
+scale = Vector3(1.7, 0.6, 1)
+pixel_size = 0.02
+texture = ExtResource("forest")
+modulate = Color(0.32, 0.48, 0.44, 1)
+shaded = false
+alpha_cut = 1
+cast_shadow = 0
+
+[node name="Layer2" type="Sprite3D" parent="ForestLayers"]
+position = Vector3(-3, 1.588, -16)
+scale = Vector3(1.6, 0.6, 1)
+pixel_size = 0.016
+texture = ExtResource("forest")
+modulate = Color(0.25, 0.39, 0.33, 1)
+shaded = false
+alpha_cut = 1
+cast_shadow = 0
+
+[node name="WoodedBanks" type="Node3D" parent="."]
+
+[node name="Bank0" type="MeshInstance3D" parent="WoodedBanks"]
+position = Vector3(-8, -0.65, -6)
+scale = Vector3(1.7, 0.72, 1.1)
+mesh = SubResource("Hill")
+
+[node name="Bank1" type="MeshInstance3D" parent="WoodedBanks"]
+position = Vector3(8, -0.65, -6.7)
+scale = Vector3(1.8, 0.86, 1.3)
+mesh = SubResource("Hill")
+
+[node name="Bank2" type="MeshInstance3D" parent="WoodedBanks"]
+position = Vector3(-15, -0.65, -7.5)
+scale = Vector3(2.1, 0.95, 1.8)
+mesh = SubResource("Hill")
+
+[node name="Bank3" type="MeshInstance3D" parent="WoodedBanks"]
+position = Vector3(17, -0.65, -9)
+scale = Vector3(2.3, 1.1, 2)
+mesh = SubResource("Hill")
+
+[node name="Bank4" type="MeshInstance3D" parent="WoodedBanks"]
+position = Vector3(-2, -0.65, -14)
+scale = Vector3(2.2, 0.55, 1.2)
+mesh = SubResource("Hill")
+
+[node name="Bank5" type="MeshInstance3D" parent="WoodedBanks"]
+position = Vector3(6, -0.65, -18)
+scale = Vector3(3, 0.65, 2)
+mesh = SubResource("Hill")
+
+[node name="Pines" type="Node3D" parent="."]
+
+[node name="Pine1" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(-9, 0.1, -3.7)
+rotation_degrees = Vector3(0, 0, -1)
+scale = Vector3(1.1, 1.0230000000000001, 1.1)
+
+[node name="Pine2" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(-6.2, 0.55, -5.3)
+rotation_degrees = Vector3(0, 67, 0)
+scale = Vector3(1, 1.01, 1)
+
+[node name="Pine3" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(-4.9, 0.55, -6.6)
+rotation_degrees = Vector3(0, 134, 1)
+scale = Vector3(0.85, 0.9265, 0.85)
+
+[node name="Pine4" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(-10.7, 0.55, -6)
+rotation_degrees = Vector3(0, 201, -1)
+scale = Vector3(1.3, 1.209, 1.3)
+
+[node name="Pine5" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(-12.5, 0.1, -3.3)
+rotation_degrees = Vector3(0, 268, 0)
+scale = Vector3(1.15, 1.1615, 1.15)
+
+[node name="Pine6" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(5, 0.55, -6)
+rotation_degrees = Vector3(0, 335, 1)
+scale = Vector3(0.93, 1.0137, 0.93)
+
+[node name="Pine7" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(7, 0.1, -4.8)
+rotation_degrees = Vector3(0, 402, -1)
+scale = Vector3(1.2, 1.116, 1.2)
+
+[node name="Pine8" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(9.7, 0.55, -5.7)
+rotation_degrees = Vector3(0, 469, 0)
+scale = Vector3(1.35, 1.3635000000000002, 1.35)
+
+[node name="Pine9" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(12, 0.1, -3.7)
+rotation_degrees = Vector3(0, 536, 1)
+scale = Vector3(1.1, 1.1990000000000003, 1.1)
+
+[node name="Pine10" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(14, 0.55, -7)
+rotation_degrees = Vector3(0, 603, -1)
+scale = Vector3(1.45, 1.3485, 1.45)
+
+[node name="Pine11" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(-15, 0.55, -8)
+rotation_degrees = Vector3(0, 670, 0)
+scale = Vector3(1.4, 1.414, 1.4)
+
+[node name="Pine12" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(-9, 0.55, -11)
+rotation_degrees = Vector3(0, 737, 1)
+scale = Vector3(1, 1.09, 1)
+
+[node name="Pine13" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(-5.5, 0.55, -12)
+rotation_degrees = Vector3(0, 804, -1)
+scale = Vector3(0.88, 0.8184, 0.88)
+
+[node name="Pine14" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(4, 0.55, -12)
+rotation_degrees = Vector3(0, 871, 0)
+scale = Vector3(0.83, 0.8382999999999999, 0.83)
+
+[node name="Pine15" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(7, 0.55, -12)
+rotation_degrees = Vector3(0, 938, 1)
+scale = Vector3(1, 1.09, 1)
+
+[node name="Pine16" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(11, 0.55, -13)
+rotation_degrees = Vector3(0, 1005, -1)
+scale = Vector3(1.2, 1.116, 1.2)
+
+[node name="Pine17" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(-17, 0.1, -4)
+rotation_degrees = Vector3(0, 1072, 0)
+scale = Vector3(1.3, 1.3130000000000002, 1.3)
+
+[node name="Pine18" parent="Pines" instance=ExtResource("pine")]
+position = Vector3(18, 0.1, -4)
+rotation_degrees = Vector3(0, 1139, 1)
+scale = Vector3(1.35, 1.4715000000000003, 1.35)
+
+[node name="ShoreDetails" type="Node3D" parent="."]
+
+[node name="Tuft0" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-13.300, 0.179, 1.690)
+rotation_degrees = Vector3(0, -22, 0)
+pixel_size = 0.002
+scale = Vector3(0.62, 0.62, 0.62)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft1" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-13.060, 0.208, 1.595)
+rotation_degrees = Vector3(0, -7, 0)
+pixel_size = 0.002
+scale = Vector3(0.77, 0.77, 0.77)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft2" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-12.820, 0.237, 1.500)
+rotation_degrees = Vector3(0, 8, 0)
+pixel_size = 0.002
+scale = Vector3(0.9199999999999999, 0.9199999999999999, 0.9199999999999999)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft3" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-12.580, 0.265, 1.690)
+rotation_degrees = Vector3(0, 23, 0)
+pixel_size = 0.002
+scale = Vector3(1.0699999999999998, 1.0699999999999998, 1.0699999999999998)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft4" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-8.800, 0.179, 1.435)
+rotation_degrees = Vector3(0, -22, 0)
+pixel_size = 0.002
+scale = Vector3(0.62, 0.62, 0.62)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft5" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-8.560, 0.208, 1.308)
+rotation_degrees = Vector3(0, -7, 0)
+pixel_size = 0.002
+scale = Vector3(0.77, 0.77, 0.77)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft6" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-8.320, 0.237, 1.466)
+rotation_degrees = Vector3(0, 8, 0)
+pixel_size = 0.002
+scale = Vector3(0.9199999999999999, 0.9199999999999999, 0.9199999999999999)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft7" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-8.080, 0.265, 1.339)
+rotation_degrees = Vector3(0, 23, 0)
+pixel_size = 0.002
+scale = Vector3(1.0699999999999998, 1.0699999999999998, 1.0699999999999998)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft8" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-5.800, 0.179, 1.260)
+rotation_degrees = Vector3(0, -22, 0)
+pixel_size = 0.002
+scale = Vector3(0.62, 0.62, 0.62)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft9" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-5.560, 0.208, 1.482)
+rotation_degrees = Vector3(0, -7, 0)
+pixel_size = 0.002
+scale = Vector3(0.77, 0.77, 0.77)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft10" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-5.320, 0.237, 1.419)
+rotation_degrees = Vector3(0, 8, 0)
+pixel_size = 0.002
+scale = Vector3(0.9199999999999999, 0.9199999999999999, 0.9199999999999999)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft11" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-5.080, 0.265, 1.356)
+rotation_degrees = Vector3(0, 23, 0)
+pixel_size = 0.002
+scale = Vector3(1.0699999999999998, 1.0699999999999998, 1.0699999999999998)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft12" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-2.100, 0.179, 1.500)
+rotation_degrees = Vector3(0, -22, 0)
+pixel_size = 0.002
+scale = Vector3(0.62, 0.62, 0.62)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft13" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-1.860, 0.208, 1.381)
+rotation_degrees = Vector3(0, -7, 0)
+pixel_size = 0.002
+scale = Vector3(0.77, 0.77, 0.77)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft14" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-1.620, 0.237, 1.262)
+rotation_degrees = Vector3(0, 8, 0)
+pixel_size = 0.002
+scale = Vector3(0.9199999999999999, 0.9199999999999999, 0.9199999999999999)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft15" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(-1.380, 0.265, 1.428)
+rotation_degrees = Vector3(0, 23, 0)
+pixel_size = 0.002
+scale = Vector3(1.0699999999999998, 1.0699999999999998, 1.0699999999999998)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft16" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(3.000, 0.179, 1.728)
+rotation_degrees = Vector3(0, -22, 0)
+pixel_size = 0.002
+scale = Vector3(0.62, 0.62, 0.62)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft17" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(3.240, 0.208, 1.593)
+rotation_degrees = Vector3(0, -7, 0)
+pixel_size = 0.002
+scale = Vector3(0.77, 0.77, 0.77)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft18" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(3.480, 0.237, 1.743)
+rotation_degrees = Vector3(0, 8, 0)
+pixel_size = 0.002
+scale = Vector3(0.9199999999999999, 0.9199999999999999, 0.9199999999999999)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft19" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(3.720, 0.265, 1.608)
+rotation_degrees = Vector3(0, 23, 0)
+pixel_size = 0.002
+scale = Vector3(1.0699999999999998, 1.0699999999999998, 1.0699999999999998)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft20" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(5.600, 0.179, 1.360)
+rotation_degrees = Vector3(0, -22, 0)
+pixel_size = 0.002
+scale = Vector3(0.62, 0.62, 0.62)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft21" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(5.840, 0.208, 1.574)
+rotation_degrees = Vector3(0, -7, 0)
+pixel_size = 0.002
+scale = Vector3(0.77, 0.77, 0.77)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft22" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(6.080, 0.237, 1.503)
+rotation_degrees = Vector3(0, 8, 0)
+pixel_size = 0.002
+scale = Vector3(0.9199999999999999, 0.9199999999999999, 0.9199999999999999)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft23" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(6.320, 0.265, 1.432)
+rotation_degrees = Vector3(0, 23, 0)
+pixel_size = 0.002
+scale = Vector3(1.0699999999999998, 1.0699999999999998, 1.0699999999999998)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft24" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(8.800, 0.179, 1.790)
+rotation_degrees = Vector3(0, -22, 0)
+pixel_size = 0.002
+scale = Vector3(0.62, 0.62, 0.62)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft25" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(9.040, 0.208, 1.695)
+rotation_degrees = Vector3(0, -7, 0)
+pixel_size = 0.002
+scale = Vector3(0.77, 0.77, 0.77)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft26" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(9.280, 0.237, 1.600)
+rotation_degrees = Vector3(0, 8, 0)
+pixel_size = 0.002
+scale = Vector3(0.9199999999999999, 0.9199999999999999, 0.9199999999999999)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft27" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(9.520, 0.265, 1.790)
+rotation_degrees = Vector3(0, 23, 0)
+pixel_size = 0.002
+scale = Vector3(1.0699999999999998, 1.0699999999999998, 1.0699999999999998)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft28" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(12.800, 0.179, 1.695)
+rotation_degrees = Vector3(0, -22, 0)
+pixel_size = 0.002
+scale = Vector3(0.62, 0.62, 0.62)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="Tuft29" type="Sprite3D" parent="ShoreDetails"]
+position = Vector3(13.040, 0.208, 1.600)
+rotation_degrees = Vector3(0, -7, 0)
+pixel_size = 0.002
+scale = Vector3(0.77, 0.77, 0.77)
+texture = ExtResource("tuft")
+shaded = true
+alpha_cut = 1
+double_sided = true
+
+[node name="MossStone0" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-5.6, -0.0024999999999999953, 1.8)
+rotation_degrees = Vector3(0, 0, 0)
+scale = Vector3(0.8999999999999999, 0.44999999999999996, 0.6000000000000001)
+mesh = SubResource("Rock")
+
+[node name="MossStone1" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-5.05, -0.019, 1.95)
+rotation_degrees = Vector3(7, 31, 3)
+scale = Vector3(0.504, 0.252, 0.336)
+mesh = SubResource("Rock")
+
+[node name="MossStone2" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(5.7, 0.010000000000000002, 1.9)
+rotation_degrees = Vector3(14, 62, 6)
+scale = Vector3(1.2, 0.6, 0.8)
+mesh = SubResource("Rock")
+
+[node name="MossStone3" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(6.4, -0.0075, 1.86)
+rotation_degrees = Vector3(21, 93, 9)
+scale = Vector3(0.78, 0.39, 0.52)
+mesh = SubResource("Rock")
+
+[node name="MossStone4" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-8.4, 0.015000000000000006, -1)
+rotation_degrees = Vector3(28, 124, 12)
+scale = Vector3(1.32, 0.66, 0.8800000000000001)
+mesh = SubResource("Rock")
+
+[node name="MossStone5" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(8.4, 0.0050000000000000044, -1.8)
+rotation_degrees = Vector3(35, 155, 15)
+scale = Vector3(1.08, 0.54, 0.7200000000000001)
+mesh = SubResource("Rock")
+
+[node name="MossStone6" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-3.4, -0.015, -4)
+rotation_degrees = Vector3(42, 186, 18)
+scale = Vector3(0.6, 0.3, 0.4)
+mesh = SubResource("Rock")
+
+[node name="MossStone7" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(3.3, -0.019999999999999997, -3.5)
+rotation_degrees = Vector3(49, 217, 21)
+scale = Vector3(0.48, 0.24, 0.32000000000000006)
+mesh = SubResource("Rock")
+
+[node name="MossStone8" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-11, 0.019999999999999997, 2.3)
+rotation_degrees = Vector3(56, 248, 24)
+scale = Vector3(1.44, 0.72, 0.96)
+mesh = SubResource("Rock")
+
+[node name="MossStone9" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(12, 0.010000000000000002, 2.4)
+rotation_degrees = Vector3(63, 279, 27)
+scale = Vector3(1.2, 0.6, 0.8)
+mesh = SubResource("Rock")
+
+[node name="Lily0" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-4.6, -0.143, 2.6)
+scale = Vector3(0.6, 1, 0.7)
+mesh = SubResource("LilyPad")
+
+[node name="Bloom" type="MeshInstance3D" parent="ShoreDetails/Lily0"]
+position = Vector3(0, 0.04, 0)
+mesh = SubResource("LilyFlower")
+
+[node name="Lily1" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-4.1499999999999995, -0.143, 2.7262206477211848)
+scale = Vector3(0.8, 1, 0.8999999999999999)
+mesh = SubResource("LilyPad")
+
+[node name="Lily2" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-3.6999999999999997, -0.143, 2.7363946140238524)
+scale = Vector3(1, 1, 0.7)
+mesh = SubResource("LilyPad")
+
+[node name="Lily3" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-4.6, -0.143, 3.22116800120898)
+scale = Vector3(0.6, 1, 0.8999999999999999)
+mesh = SubResource("LilyPad")
+
+[node name="Bloom" type="MeshInstance3D" parent="ShoreDetails/Lily3"]
+position = Vector3(0, 0.04, 0)
+mesh = SubResource("LilyFlower")
+
+[node name="Lily4" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-4.1499999999999995, -0.143, 3.086479625703811)
+scale = Vector3(0.8, 1, 0.7)
+mesh = SubResource("LilyPad")
+
+[node name="Lily5" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(-3.6999999999999997, -0.143, 3.056161358800529)
+scale = Vector3(1, 1, 0.8999999999999999)
+mesh = SubResource("LilyPad")
+
+[node name="Lily6" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(4.3, -0.143, 2.558087675270161)
+scale = Vector3(0.6, 1, 0.7)
+mesh = SubResource("LilyPad")
+
+[node name="Bloom" type="MeshInstance3D" parent="ShoreDetails/Lily6"]
+position = Vector3(0, 0.04, 0)
+mesh = SubResource("LilyFlower")
+
+[node name="Lily7" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(4.75, -0.143, 2.6985479898078184)
+scale = Vector3(0.8, 1, 0.8999999999999999)
+mesh = SubResource("LilyPad")
+
+[node name="Lily8" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(5.2, -0.143, 2.7484037369935073)
+scale = Vector3(1, 1, 0.7)
+mesh = SubResource("LilyPad")
+
+[node name="Lily9" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(4.3, -0.143, 3.2618177727862636)
+scale = Vector3(0.6, 1, 0.8999999999999999)
+mesh = SubResource("LilyPad")
+
+[node name="Bloom" type="MeshInstance3D" parent="ShoreDetails/Lily9"]
+position = Vector3(0, 0.04, 0)
+mesh = SubResource("LilyFlower")
+
+[node name="Lily10" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(4.75, -0.143, 3.1183968333665946)
+scale = Vector3(0.8, 1, 0.7)
+mesh = SubResource("LilyPad")
+
+[node name="Lily11" type="MeshInstance3D" parent="ShoreDetails"]
+position = Vector3(5.2, -0.143, 3.0500014690173947)
+scale = Vector3(1, 1, 0.8999999999999999)
+mesh = SubResource("LilyPad")

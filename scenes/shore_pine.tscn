@@ -1,0 +1,31 @@
+[gd_scene format=3]
+[ext_resource type="Texture2D" path="res://art/shore_pine.svg" id="crown"]
+[sub_resource type="StandardMaterial3D" id="Bark"]
+albedo_color = Color(0.22, 0.25, 0.20, 1)
+roughness = 1.0
+[sub_resource type="CylinderMesh" id="Trunk"]
+material = SubResource("Bark")
+top_radius = 0.025
+bottom_radius = 0.14
+height = 4.8
+radial_segments = 7
+[node name="ShorePine" type="Node3D"]
+metadata/authoring = "3D trunk with crossed, alpha-tested needle cards. Edit the SVG or replace cards with final art."
+[node name="Trunk" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.4, 0)
+mesh = SubResource("Trunk")
+[node name="NeedlesFront" type="Sprite3D" parent="."]
+position = Vector3(0, 2.56, 0)
+pixel_size = 0.004
+texture = ExtResource("crown")
+shaded = true
+alpha_cut = 1
+double_sided = true
+[node name="NeedlesCross" type="Sprite3D" parent="."]
+position = Vector3(0, 2.56, 0)
+rotation_degrees = Vector3(0, 90, 0)
+pixel_size = 0.004
+texture = ExtResource("crown")
+shaded = true
+alpha_cut = 1
+double_sided = true

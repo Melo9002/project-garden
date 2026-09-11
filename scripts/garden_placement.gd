@@ -33,7 +33,7 @@ func _process(_delta: float) -> void:
 		return
 	preview.visible = true
 	var point: Vector3 = hit.position
-	preview.global_position = Vector3(point.x, 0.12, point.z)
+	preview.global_position = Vector3(point.x, garden_definition.surface_height_at(Vector2(point.x, point.z)) + 0.06, point.z)
 	placement_valid = garden_definition.can_place_flower(Vector2(point.x, point.z))
 	preview.show_placement_preview(placement_valid)
 
@@ -61,7 +61,7 @@ func restore_flowers(positions: Array[Vector2]) -> void:
 		var flower := flower_scene.instantiate() as FlowerPatch
 		assert(flower != null, "Flower scene must use FlowerPatch at its root")
 		placed_objects.add_child(flower)
-		flower.position = Vector3(ground_position.x, 0.12, ground_position.y)
+		flower.position = Vector3(ground_position.x, garden_definition.surface_height_at(ground_position) + 0.06, ground_position.y)
 		flower.finish_placement()
 
 func _place_preview() -> void:

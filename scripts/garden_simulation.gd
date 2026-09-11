@@ -7,6 +7,7 @@ var random := RandomNumberGenerator.new()
 var elapsed: float = 0.0
 var garden_definition: GardenDefinition
 var flower_positions: Array[Vector2] = []
+var garden_energy := {"Earth": 0.1, "Fire": 0.1, "Wind": 0.1, "Water": 0.1}
 
 func _init(definition: GardenDefinition = null) -> void:
 	garden_definition = definition if definition != null else GardenDefinition.new()
@@ -17,8 +18,10 @@ func _init(definition: GardenDefinition = null) -> void:
 
 func advance(delta: float) -> void:
 	elapsed += delta
+	_update_garden_sources(delta)
 	for pixy in pixies:
 		_update_needs(pixy, delta)
+		_absorb_local_energy(pixy, delta)
 		_update_reaction(pixy, delta)
 		if pixy.idle_remaining > 0.0:
 			pixy.idle_remaining -= delta
@@ -41,6 +44,26 @@ func _update_needs(pixy: PixyState, delta: float) -> void:
 	pixy.comfort = clampf(pixy.comfort - delta * 0.0007, 0.0, 1.0)
 	pixy.curiosity = clampf(pixy.curiosity - delta * 0.0014, 0.0, 1.0)
 
+func _update_garden_sources(delta: float) -> void:
+	_add_garden_energy("Earth", flower_positions.size() * delta * 0.00008)
+	_add_garden_energy("Fire", delta * 0.00004)
+	_add_garden_energy("Wind", delta * 0.00003)
+	_add_garden_energy("Water", delta * 0.00004)
+
+func _absorb_local_energy(pixy: PixyState, delta: float) -> void:
+	var exposure := garden_definition.elemental_exposure_at(pixy.position, flower_positions)
+	for kind in exposure:
+		var amount := float(exposure[kind]) * delta
+		if amount <= 0.0:
+			continue
+		pixy.elemental_energy[kind] = clampf(float(pixy.elemental_energy[kind]) + amount * 0.0025, 0.0, 1.0)
+		_add_garden_energy(kind, amount * 0.00012)
+		if kind == pixy.element:
+			pixy.comfort = clampf(pixy.comfort + amount * 0.0015, 0.0, 1.0)
+
+func _add_garden_energy(kind: String, amount: float) -> void:
+	garden_energy[kind] = clampf(float(garden_energy[kind]) + amount, 0.0, 1.0)
+
 func _update_reaction(pixy: PixyState, delta: float) -> void:
 	if pixy.reaction_remaining <= 0.0:
 		return
@@ -55,8 +78,16 @@ func _apply_idle_activity(pixy: PixyState, delta: float) -> void:
 	elif pixy.activity == "Enjoying flowers":
 		pixy.curiosity = clampf(pixy.curiosity + delta * 0.025, 0.0, 1.0)
 		pixy.comfort = clampf(pixy.comfort + delta * 0.01, 0.0, 1.0)
+	elif pixy.activity == "Playing in the shallows":
+		pixy.curiosity = clampf(pixy.curiosity + delta * 0.018, 0.0, 1.0)
+		pixy.comfort = clampf(pixy.comfort + delta * 0.008, 0.0, 1.0)
 
 func _arrive_and_choose(pixy: PixyState) -> void:
+	if pixy.activity == "Seeking the lake":
+		pixy.activity = "Playing in the shallows"
+		pixy.idle_remaining = random.randf_range(8.0, 12.0)
+		pixy.show_reaction("♪", 2.5)
+		return
 	if pixy.activity == "Visiting flowers":
 		pixy.activity = "Enjoying flowers"
 		pixy.idle_remaining = random.randf_range(3.0, 5.0)
@@ -65,6 +96,12 @@ func _arrive_and_choose(pixy: PixyState) -> void:
 	if pixy.energy < 0.35:
 		pixy.activity = "Resting"
 		pixy.idle_remaining = random.randf_range(4.0, 7.0)
+		return
+	# Water seeks its habitat when comfort dips, then returns to ordinary wandering.
+	# The recovery/seek gap prevents a rapid back-and-forth at the shore.
+	if pixy.element == "Water" and pixy.comfort < 0.72 and pixy.activity != "Playing in the shallows":
+		pixy.target = garden_definition.random_water_point(random)
+		pixy.activity = "Seeking the lake"
 		return
 	if pixy.curiosity < 0.55 and not flower_positions.is_empty():
 		pixy.activity = "Visiting flowers"
@@ -97,6 +134,7 @@ func to_dictionary() -> Dictionary:
 		"random_state": random.state,
 		"pixies": saved_pixies,
 		"flowers": saved_flowers,
+		"garden_energy": garden_energy.duplicate(),
 	}
 
 func load_dictionary(data: Dictionary) -> void:
@@ -109,5 +147,13 @@ func load_dictionary(data: Dictionary) -> void:
 	flower_positions.clear()
 	for value in data.get("flowers", []):
 		if value is Array and value.size() >= 2:
-			flower_positions.append(Vector2(float(value[0]), float(value[1])))
+			var point := Vector2(float(value[0]), float(value[1]))
+			flower_positions.append(point if garden_definition.can_place_flower(point) else garden_definition.nearest_meadow_point(point))
+	for pixy in pixies:
+		if pixy.activity == "Visiting flowers" and not flower_positions.is_empty():
+			pixy.target = _nearest_flower(pixy.position)
+	var saved_garden_energy: Variant = data.get("garden_energy", {})
+	if saved_garden_energy is Dictionary:
+		for kind in garden_energy:
+			garden_energy[kind] = clampf(float(saved_garden_energy.get(kind, garden_energy[kind])), 0.0, 1.0)
 

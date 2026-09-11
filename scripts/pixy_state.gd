@@ -14,6 +14,7 @@ var curiosity: float = 0.75
 var activity: String = "Taking in the garden"
 var reaction: String = ""
 var reaction_remaining: float = 0.0
+var elemental_energy := {"Earth": 0.1, "Fire": 0.1, "Wind": 0.1, "Water": 0.1}
 
 func _init(identity: String, kind: String, start: Vector2) -> void:
 	id = identity
@@ -46,6 +47,9 @@ func show_reaction(value: String, duration: float) -> void:
 	reaction = value
 	reaction_remaining = duration
 
+func affinity_energy() -> float:
+	return float(elemental_energy.get(element, 0.0))
+
 func to_dictionary() -> Dictionary:
 	return {
 		"id": id,
@@ -60,6 +64,7 @@ func to_dictionary() -> Dictionary:
 		"activity": activity,
 		"reaction": reaction,
 		"reaction_remaining": reaction_remaining,
+		"elemental_energy": elemental_energy.duplicate(),
 	}
 
 func load_dictionary(data: Dictionary) -> void:
@@ -73,6 +78,10 @@ func load_dictionary(data: Dictionary) -> void:
 	activity = str(data.get("activity", activity))
 	reaction = str(data.get("reaction", ""))
 	reaction_remaining = float(data.get("reaction_remaining", 0.0))
+	var saved_energy: Variant = data.get("elemental_energy", {})
+	if saved_energy is Dictionary:
+		for kind in elemental_energy:
+			elemental_energy[kind] = clampf(float(saved_energy.get(kind, elemental_energy[kind])), 0.0, 1.0)
 
 func _read_vector2(value: Variant, fallback: Vector2) -> Vector2:
 	if value is Array and value.size() >= 2:

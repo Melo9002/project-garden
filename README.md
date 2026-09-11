@@ -10,7 +10,7 @@ The vision is a quiet living diorama: tend mysterious pixies, shape their enviro
 
 Implemented:
 
-- One editor-visible 3D garden with a traversable decorative pond, rocks, plants, collisions, spawn markers, placement regions, and a bounded camera rig.
+- One editor-visible 3D garden with a reachable foreground lake, rocks, plants, collisions, spawn markers, placement regions, and a bounded camera rig.
 - Layered 3D scenery and a 2D horizon forest create perspective parallax; oversized ground and foreground vegetation hide the map edges.
 - Four replaceable 2D billboard placeholder pixies representing Earth, Fire, Wind, and Water.
 - Click selection with a visible ring and a compact live identity/activity inspector.
@@ -18,11 +18,13 @@ Implemented:
 - Gentle energy, comfort and curiosity needs with autonomous resting, water investigation and flower visits.
 - Readable JSON save/load for individual pixies, placed flowers, elapsed time and deterministic simulation state.
 - F3 developer panel with exact needs, accelerated simulation, minute stepping and forced behavior-test conditions.
+- Provisional Earth, Fire, Wind and Water development for individual pixies and the first garden, with visible scenario targets.
+- Rising chromatic elemental flares that make active pixy and environmental energy sources visible.
 - Independent wandering, idling, and gentle hovering.
 - Smooth bounded perspective camera with keyboard/drag panning, wheel zoom, three quick stops, and pause/resume controls.
 - Separate simulation state and visual presentation.
 
-The current build tests the feel of observing and gently influencing a small inhabited space. Social interactions, evolution, offline progress and final illustrated pixie sprites are not implemented yet. The pond is traversable scenery; pixies can hover across it.
+The current build tests the feel of observing and gently influencing a small inhabited space. Social interactions, evolution, offline progress and final illustrated pixie sprites are not implemented yet. Pixies can hover across the foreground lake. Water seeks it when comfort dips and plays in its shallows, restoring comfort and curiosity.
 
 ## Run the project
 
@@ -33,7 +35,7 @@ Requirements: **Godot 4.7 standard edition**, using GDScript and the Compatibili
 3. Open the project and press **F5**.
 4. Use **Pause / resume** and **Change viewpoint** in the on-screen panel.
 
-Open `scenes/garden.tscn` to inspect and edit the complete garden layout. The UI and pixy placeholder are reusable child scenes.
+Open `scenes/garden.tscn` for the complete garden and `scenes/lakeshore.tscn` for the static scenery. Shoreline coordinates and habitat rules live in `first_garden_definition.tres`; the visual land polygon is checked against those points by `verify_lakeshore.gd`. The UI and pixy placeholder are reusable child scenes.
 
 If Godot is on your PATH, you can also launch from the repository root:
 
@@ -66,6 +68,8 @@ The code keeps individual state and simulation rules independent of scene nodes 
 | File | Responsibility |
 | --- | --- |
 | `scenes/garden.tscn` | Editor-authored garden, lighting, collisions, spawns and viewpoints |
+| `scenes/lakeshore.tscn` | Authored land, foreground lake and layered scenery |
+| `scenes/shore_pine.tscn` | Reusable 3D trunk and crossed SVG needle cards |
 | `scenes/garden_ui.tscn` | Reusable editor-authored interface |
 | `scenes/pixy_placeholder.tscn` | Reusable temporary pixy visual |
 | `scripts/garden.gd` | Fixed-step scheduling and scene/simulation coordination |

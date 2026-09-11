@@ -3,6 +3,7 @@ extends Node3D
 
 @export var pixy_scene: PackedScene
 @export var garden_definition: GardenDefinition
+@export var element_flare_scene: PackedScene
 @export_range(1.0, 60.0, 1.0) var simulation_rate: float = 30.0
 @export var camera_look_target: Vector3 = Vector3(0, 0.1, 0)
 @onready var pixy_container: Node3D = $Pixies
@@ -10,6 +11,7 @@ extends Node3D
 @onready var camera_rig: GardenCamera = $CameraRig
 @onready var ui: CanvasLayer = $GardenUI
 @onready var placement: GardenPlacement = $GardenPlacement
+@onready var effects: Node3D = $Effects
 
 var simulation: GardenSimulation
 var views: Array[PixyView] = []
@@ -19,11 +21,18 @@ var accumulator := 0.0
 var selected_index := -1
 var simulation_speed := 1.0
 var debug_open := false
+var energy_effect_timer := 0.0
+var energy_effect_index := 0
 const COLORS := [Color("a5bd70"), Color("ed9565"), Color("c2dfca"), Color("94badd")]
+const ELEMENT_COLORS := {
+	"Earth": Color("b8d36f"), "Fire": Color("ff9b65"),
+	"Wind": Color("9fffe4"), "Water": Color("8dbdff"),
+}
 
 func _ready() -> void:
 	assert(pixy_scene != null, "Garden requires a Pixy scene")
 	assert(garden_definition != null, "Garden requires a GardenDefinition")
+	assert(element_flare_scene != null, "Garden requires an ElementFlare scene")
 	simulation = GardenSimulation.new(garden_definition)
 	_apply_authored_spawn_positions()
 	_spawn_pixy_views()
@@ -47,13 +56,15 @@ func _process(delta: float) -> void:
 		while accumulator >= step:
 			simulation.advance(step)
 			accumulator -= step
+	_update_energy_effects(delta)
 	for i in range(views.size()):
-		views[i].sync(simulation.pixies[i], simulation.elapsed)
+		_sync_view(views[i], simulation.pixies[i], simulation.elapsed)
 	if selected_index >= 0:
 		ui.show_pixy(simulation.pixies[selected_index])
 	ui.set_status("PAUSED" if paused else "OBSERVING  ·  %02d:%02d" % [int(simulation.elapsed) / 60, int(simulation.elapsed) % 60])
+	ui.set_garden_energy(simulation.garden_energy, garden_definition.energy_targets())
 	var selected_state: PixyState = simulation.pixies[selected_index] if selected_index >= 0 else null
-	ui.update_debug(simulation.elapsed, simulation_speed, paused, selected_state)
+	ui.update_debug(simulation.elapsed, simulation_speed, paused, selected_state, simulation.garden_energy)
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.keycode == KEY_F3 and event.pressed and not event.echo:
@@ -62,6 +73,46 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if debug_open:
 			paused = true
 		get_viewport().set_input_as_handled()
+
+func _update_energy_effects(delta: float) -> void:
+	if paused:
+		return
+	energy_effect_timer -= delta
+	if energy_effect_timer > 0.0:
+		return
+	energy_effect_timer = 0.72
+	var pixy_index := energy_effect_index % simulation.pixies.size()
+	var pixy := simulation.pixies[pixy_index]
+	var exposure := garden_definition.elemental_exposure_at(pixy.position, simulation.flower_positions)
+	var strongest := _strongest_exposure(exposure)
+	if float(exposure[strongest]) >= 0.2:
+		_spawn_energy_flare(views[pixy_index].global_position + Vector3(0.18, 0.3, 0), strongest)
+	if energy_effect_index % 4 == 0:
+		_spawn_ambient_source_flare()
+	energy_effect_index += 1
+
+func _strongest_exposure(exposure: Dictionary) -> String:
+	var strongest := "Fire"
+	for kind in exposure:
+		if float(exposure[kind]) > float(exposure[strongest]):
+			strongest = kind
+	return strongest
+
+func _spawn_ambient_source_flare() -> void:
+	if not simulation.flower_positions.is_empty():
+		var flower_index := int(energy_effect_index / 4) % simulation.flower_positions.size()
+		var flower := simulation.flower_positions[flower_index]
+		_spawn_energy_flare(Vector3(flower.x, 0.5, flower.y), "Earth")
+	else:
+		var water := garden_definition.water_center
+		_spawn_energy_flare(Vector3(water.x, 0.35, water.y), "Water")
+
+func _spawn_energy_flare(world_position: Vector3, element: String) -> void:
+	var flare := element_flare_scene.instantiate() as ElementFlare
+	assert(flare != null, "Element flare scene must use ElementFlare at its root")
+	effects.add_child(flare)
+	flare.global_position = world_position
+	flare.setup(ELEMENT_COLORS[element], float(energy_effect_index))
 
 func _apply_authored_spawn_positions() -> void:
 	var spawn_points := spawn_container.get_children()
@@ -80,8 +131,11 @@ func _spawn_pixy_views() -> void:
 		pixy_container.add_child(view)
 		view.setup(simulation.pixies[i].element, COLORS[i], float(i))
 		view.selected.connect(_select_pixy)
-		view.sync(simulation.pixies[i], 0.0)
+		_sync_view(view, simulation.pixies[i], 0.0)
 		views.append(view)
+
+func _sync_view(view: PixyView, pixy: PixyState, time: float) -> void:
+	view.sync(pixy, time, garden_definition.surface_height_at(pixy.position), garden_definition.surface_at(pixy.position) == GardenDefinition.WATER)
 
 func _select_pixy(chosen_view: PixyView) -> void:
 	selected_index = views.find(chosen_view)

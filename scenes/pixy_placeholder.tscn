@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/pixy_view.gd" id="1"]
 [ext_resource type="Texture2D" path="res://art/pixy_placeholder.svg" id="2"]
@@ -18,6 +18,18 @@ ring_segments = 12
 [sub_resource type="CapsuleShape3D" id="PickShape"]
 radius = 0.35
 height = 1.05
+
+[sub_resource type="StandardMaterial3D" id="RippleMat"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.65, 0.87, 0.83, 0.38)
+
+[sub_resource type="TorusMesh" id="RippleMesh"]
+material = SubResource("RippleMat")
+inner_radius = 0.39
+outer_radius = 0.405
+rings = 40
+ring_segments = 6
 
 [node name="PixyPlaceholder" type="Node3D"]
 script = ExtResource("1")
@@ -53,6 +65,11 @@ position = Vector3(0, 0.04, 0)
 
 [node name="Shape" type="CollisionShape3D" parent="PickArea"]
 shape = SubResource("PickShape")
+
+[node name="WaterRipple" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.575, 0)
+mesh = SubResource("RippleMesh")
+visible = false
 
 [connection signal="input_event" from="PickArea" to="." method="_on_pick_area_input_event"]
 [connection signal="mouse_entered" from="PickArea" to="." method="_on_pick_area_mouse_entered"]

@@ -86,7 +86,7 @@ anchor_right = 1.0
 offset_left = -286.0
 offset_top = 24.0
 offset_right = -24.0
-offset_bottom = 222.0
+offset_bottom = 244.0
 grow_horizontal = 0
 mouse_filter = 2
 
@@ -138,9 +138,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -354.0
-offset_top = 242.0
+offset_top = 262.0
 offset_right = -24.0
-offset_bottom = 562.0
+offset_bottom = 608.0
 grow_horizontal = 0
 
 [node name="Margin" type="MarginContainer" parent="DebugPanel"]
@@ -220,4 +220,26 @@ text = "Low energy"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Low curiosity"
+
+[node name="GardenEnergy" type="PanelContainer" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -164.0
+offset_right = 230.0
+offset_bottom = -48.0
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="GardenEnergy"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="Values" type="Label" parent="GardenEnergy/Margin"]
+layout_mode = 2
+text = "EARTH   10 / 60\nFIRE      10 / 45\nWIND     10 / 50\nWATER  10 / 55"
 
