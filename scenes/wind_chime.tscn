@@ -1,0 +1,89 @@
+[gd_scene load_steps=15 format=3]
+[ext_resource type="Script" path="res://scripts/flower_patch.gd" id="1"]
+[sub_resource type="StandardMaterial3D" id="Valid"]
+shading_mode = 0
+albedo_color = Color(0.38, 0.9, 0.48, 0.85)
+[sub_resource type="StandardMaterial3D" id="Invalid"]
+shading_mode = 0
+albedo_color = Color(0.95, 0.28, 0.3, 0.85)
+[sub_resource type="StandardMaterial3D" id="ValidPreview"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.28, 0.9, 0.45, 0.18)
+[sub_resource type="StandardMaterial3D" id="InvalidPreview"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.06, 0.08, 0.62)
+[sub_resource type="TorusMesh" id="Ring"]
+inner_radius = 0.42
+outer_radius = 0.48
+rings = 24
+ring_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="Wood"]
+albedo_color = Color(0.37, 0.25, 0.16, 1)
+roughness = 0.85
+[sub_resource type="CylinderMesh" id="Post"]
+material = SubResource("Wood")
+top_radius = 0.035
+bottom_radius = 0.055
+height = 1.25
+radial_segments = 7
+[sub_resource type="BoxMesh" id="Arm"]
+material = SubResource("Wood")
+size = Vector3(0.5, 0.055, 0.055)
+[sub_resource type="StandardMaterial3D" id="Metal"]
+albedo_color = Color(0.61, 0.8, 0.79, 1)
+metallic = 0.55
+roughness = 0.25
+emission_enabled = true
+emission = Color(0.12, 0.3, 0.31, 1)
+emission_energy_multiplier = 0.45
+[sub_resource type="CylinderMesh" id="Chime"]
+material = SubResource("Metal")
+top_radius = 0.035
+bottom_radius = 0.055
+height = 0.34
+radial_segments = 8
+[sub_resource type="StandardMaterial3D" id="Ribbon"]
+albedo_color = Color(0.91, 0.54, 0.66, 1)
+roughness = 0.7
+[sub_resource type="PrismMesh" id="RibbonMesh"]
+material = SubResource("Ribbon")
+size = Vector3(0.12, 0.25, 0.035)
+[node name="WindChime" type="Node3D"]
+script = ExtResource("1")
+valid_preview_material = SubResource("ValidPreview")
+invalid_preview_material = SubResource("InvalidPreview")
+item_kind = &"wind_chime"
+[node name="Post" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.625, 0)
+mesh = SubResource("Post")
+[node name="Arm" type="MeshInstance3D" parent="."]
+position = Vector3(0.19, 1.18, 0)
+mesh = SubResource("Arm")
+[node name="Chimes" type="Node3D" parent="."]
+position = Vector3(0.28, 0.91, 0)
+[node name="One" type="MeshInstance3D" parent="Chimes"]
+position = Vector3(-0.1, 0, 0)
+mesh = SubResource("Chime")
+[node name="Two" type="MeshInstance3D" parent="Chimes"]
+position = Vector3(0.02, -0.08, 0)
+mesh = SubResource("Chime")
+[node name="Three" type="MeshInstance3D" parent="Chimes"]
+position = Vector3(0.13, 0.02, 0)
+mesh = SubResource("Chime")
+[node name="Ribbon" type="MeshInstance3D" parent="Chimes"]
+position = Vector3(0.02, -0.33, 0)
+rotation_degrees = Vector3(0, 0, 8)
+mesh = SubResource("RibbonMesh")
+[node name="ValidRing" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.1, 0)
+mesh = SubResource("Ring")
+material_override = SubResource("Valid")
+visible = false
+[node name="InvalidRing" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.1, 0)
+mesh = SubResource("Ring")
+material_override = SubResource("Invalid")
+visible = false

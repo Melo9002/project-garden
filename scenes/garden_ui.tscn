@@ -7,7 +7,7 @@ script = ExtResource("1")
 offset_left = 24.0
 offset_top = 24.0
 offset_right = 318.0
-offset_bottom = 328.0
+offset_bottom = 405.0
 [node name="Margin" type="MarginContainer" parent="Panel"]
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
@@ -30,6 +30,20 @@ text = "Next garden stop"
 [node name="FlowerButton" type="Button" parent="Panel/Margin/Column"]
 text = "Place flower patch"
 
+[node name="ItemButtons" type="HBoxContainer" parent="Panel/Margin/Column"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RestingStone" type="Button" parent="Panel/Margin/Column/ItemButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Resting stone"
+
+[node name="WindChime" type="Button" parent="Panel/Margin/Column/ItemButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Wind chime"
+
 [node name="SaveLoad" type="HBoxContainer" parent="Panel/Margin/Column"]
 layout_mode = 2
 theme_override_constants/separation = 8
@@ -48,6 +62,10 @@ text = "Load"
 layout_mode = 2
 text = ""
 horizontal_alignment = 1
+
+[node name="MenuButton" type="Button" parent="Panel/Margin/Column"]
+layout_mode = 2
+text = "Garden menu"
 
 [node name="Controls" type="Label" parent="."]
 anchors_preset = 3
@@ -86,7 +104,7 @@ anchor_right = 1.0
 offset_left = -286.0
 offset_top = 24.0
 offset_right = -24.0
-offset_bottom = 244.0
+offset_bottom = 306.0
 grow_horizontal = 0
 mouse_filter = 2
 
@@ -138,9 +156,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -354.0
-offset_top = 262.0
+offset_top = 322.0
 offset_right = -24.0
-offset_bottom = 608.0
+offset_bottom = 688.0
 grow_horizontal = 0
 
 [node name="Margin" type="MarginContainer" parent="DebugPanel"]
@@ -221,6 +239,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Low curiosity"
 
+[node name="Greet" type="Button" parent="DebugPanel/Margin/Column/SelectedTests"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Greet"
+
 [node name="GardenEnergy" type="PanelContainer" parent="."]
 anchors_preset = 2
 anchor_top = 1.0
@@ -242,4 +265,83 @@ theme_override_constants/margin_bottom = 10
 [node name="Values" type="Label" parent="GardenEnergy/Margin"]
 layout_mode = 2
 text = "EARTH   10 / 60\nFIRE      10 / 45\nWIND     10 / 50\nWATER  10 / 55"
+
+[node name="GardenMenu" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Shade" type="ColorRect" parent="GardenMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.035, 0.075, 0.07, 0.72)
+
+[node name="Center" type="CenterContainer" parent="GardenMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Card" type="PanelContainer" parent="GardenMenu/Center"]
+custom_minimum_size = Vector2(390, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="GardenMenu/Center/Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 28
+
+[node name="Column" type="VBoxContainer" parent="GardenMenu/Center/Card/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="GardenMenu/Center/Card/Margin/Column"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "PROJECT GARDEN"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="GardenMenu/Center/Card/Margin/Column"]
+layout_mode = 2
+text = "A quiet place remembers who lives here."
+horizontal_alignment = 1
+
+[node name="Continue" type="Button" parent="GardenMenu/Center/Card/Margin/Column"]
+layout_mode = 2
+text = "Continue garden"
+
+[node name="NewGarden" type="Button" parent="GardenMenu/Center/Card/Margin/Column"]
+layout_mode = 2
+text = "New garden"
+
+[node name="Save" type="Button" parent="GardenMenu/Center/Card/Margin/Column"]
+layout_mode = 2
+text = "Save garden"
+
+[node name="Load" type="Button" parent="GardenMenu/Center/Card/Margin/Column"]
+layout_mode = 2
+text = "Load garden"
+
+[node name="Return" type="Button" parent="GardenMenu/Center/Card/Margin/Column"]
+layout_mode = 2
+text = "Return to garden"
+
+[node name="MenuNotice" type="Label" parent="GardenMenu/Center/Card/Margin/Column"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="NewGardenConfirmation" type="ConfirmationDialog" parent="."]
+title = "Begin a new garden?"
+dialog_text = "The current garden remains on disk until you save the new one."
+ok_button_text = "Begin"
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/flower_patch.gd" id="1"]
 [sub_resource type="StandardMaterial3D" id="StemMat"]
@@ -29,6 +29,14 @@ albedo_color = Color(0.38, 0.9, 0.48, 0.85)
 [sub_resource type="StandardMaterial3D" id="InvalidMat"]
 shading_mode = 0
 albedo_color = Color(0.95, 0.28, 0.3, 0.85)
+[sub_resource type="StandardMaterial3D" id="ValidPreview"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.28, 0.9, 0.45, 0.18)
+[sub_resource type="StandardMaterial3D" id="InvalidPreview"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.06, 0.08, 0.62)
 [sub_resource type="TorusMesh" id="RingMesh"]
 inner_radius = 0.42
 outer_radius = 0.48
@@ -37,6 +45,8 @@ ring_segments = 8
 
 [node name="FlowerPatch" type="Node3D"]
 script = ExtResource("1")
+valid_preview_material = SubResource("ValidPreview")
+invalid_preview_material = SubResource("InvalidPreview")
 
 [node name="Stem" type="MeshInstance3D" parent="."]
 position = Vector3(0, 0.19, 0)

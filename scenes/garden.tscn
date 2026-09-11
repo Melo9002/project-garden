@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" path="res://scenes/flower_patch.tscn" id="7"]
 [ext_resource type="Resource" path="res://first_garden_definition.tres" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/element_flare.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/resting_stone.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/wind_chime.tscn" id="11"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial"]
 sky_top_color = Color(0.39, 0.49, 0.61, 1)
@@ -73,6 +75,8 @@ shape = SubResource("GroundShape")
 [node name="GardenPlacement" type="Node3D" parent="." unique_id=177095109]
 script = ExtResource("6")
 flower_scene = ExtResource("7")
+resting_stone_scene = ExtResource("10")
+wind_chime_scene = ExtResource("11")
 garden_definition = ExtResource("8")
 
 [node name="PlacementRegions" type="Node3D" parent="." unique_id=725036149]

@@ -23,6 +23,8 @@ var simulation_speed := 1.0
 var debug_open := false
 var energy_effect_timer := 0.0
 var energy_effect_index := 0
+var menu_open := false
+var active_garden := false
 const COLORS := [Color("a5bd70"), Color("ed9565"), Color("c2dfca"), Color("94badd")]
 const ELEMENT_COLORS := {
 	"Earth": Color("b8d36f"), "Fire": Color("ff9b65"),
@@ -39,15 +41,21 @@ func _ready() -> void:
 	ui.pause_requested.connect(_toggle_pause)
 	ui.viewpoint_requested.connect(_next_viewpoint)
 	ui.flower_placement_requested.connect(placement.begin_flower_placement)
+	ui.item_placement_requested.connect(placement.begin_item_placement)
 	ui.save_requested.connect(_save_garden)
 	ui.load_requested.connect(_load_garden)
+	ui.menu_requested.connect(_toggle_garden_menu)
+	ui.continue_requested.connect(_continue_garden)
+	ui.new_garden_requested.connect(_new_garden)
 	ui.debug_speed_requested.connect(_set_debug_speed)
 	ui.debug_step_requested.connect(_debug_step_minute)
 	ui.debug_low_energy_requested.connect(_debug_set_low_energy)
 	ui.debug_low_curiosity_requested.connect(_debug_set_low_curiosity)
-	placement.flower_placed.connect(_on_flower_placed)
+	ui.debug_social_requested.connect(_debug_start_social)
+	placement.item_placed.connect(_on_item_placed)
 	camera_rig.position_changed.connect(ui.set_camera_position)
 	camera_rig.focus_normalized(0.5)
+	_open_garden_menu()
 
 func _process(delta: float) -> void:
 	if not paused:
@@ -60,7 +68,8 @@ func _process(delta: float) -> void:
 	for i in range(views.size()):
 		_sync_view(views[i], simulation.pixies[i], simulation.elapsed)
 	if selected_index >= 0:
-		ui.show_pixy(simulation.pixies[selected_index])
+		var selected := simulation.pixies[selected_index]
+		ui.show_pixy(selected, simulation.display_name_for_id(selected.favorite_id()))
 	ui.set_status("PAUSED" if paused else "OBSERVING  ·  %02d:%02d" % [int(simulation.elapsed) / 60, int(simulation.elapsed) % 60])
 	ui.set_garden_energy(simulation.garden_energy, garden_definition.energy_targets())
 	var selected_state: PixyState = simulation.pixies[selected_index] if selected_index >= 0 else null
@@ -134,6 +143,51 @@ func _spawn_pixy_views() -> void:
 		_sync_view(view, simulation.pixies[i], 0.0)
 		views.append(view)
 
+func _clear_runtime_garden() -> void:
+	placement.cancel_placement()
+	for view in views:
+		view.queue_free()
+	views.clear()
+	for child in $Interactables.get_children():
+		child.queue_free()
+	selected_index = -1
+	ui.show_notice("")
+
+func _new_garden() -> void:
+	_clear_runtime_garden()
+	var fresh_random := RandomNumberGenerator.new()
+	fresh_random.randomize()
+	simulation = GardenSimulation.new(garden_definition, fresh_random.randi())
+	_apply_authored_spawn_positions()
+	_spawn_pixy_views()
+	accumulator = 0.0
+	paused = false
+	active_garden = true
+	menu_open = false
+	ui.set_menu_visible(false, GardenSave.exists(), true)
+	ui.show_notice("A new garden has begun")
+
+func _continue_garden() -> void:
+	_load_garden()
+	if GardenSave.exists():
+		active_garden = true
+		paused = false
+		menu_open = false
+		ui.set_menu_visible(false, true, true)
+
+func _open_garden_menu() -> void:
+	menu_open = true
+	paused = true
+	ui.set_menu_visible(true, GardenSave.exists(), active_garden)
+
+func _toggle_garden_menu() -> void:
+	if menu_open:
+		menu_open = false
+		paused = false
+		ui.set_menu_visible(false, GardenSave.exists(), active_garden)
+	else:
+		_open_garden_menu()
+
 func _sync_view(view: PixyView, pixy: PixyState, time: float) -> void:
 	view.sync(pixy, time, garden_definition.surface_height_at(pixy.position), garden_definition.surface_at(pixy.position) == GardenDefinition.WATER)
 
@@ -141,14 +195,16 @@ func _select_pixy(chosen_view: PixyView) -> void:
 	selected_index = views.find(chosen_view)
 	for i in range(views.size()):
 		views[i].set_selected(i == selected_index)
-	ui.show_pixy(simulation.pixies[selected_index])
+	var selected := simulation.pixies[selected_index]
+	ui.show_pixy(selected, simulation.display_name_for_id(selected.favorite_id()))
 
-func _on_flower_placed(ground_position: Vector2) -> void:
-	simulation.notice_flower(ground_position)
+func _on_item_placed(kind: StringName, ground_position: Vector2) -> void:
+	simulation.notice_item(kind, ground_position)
 
 func _save_garden() -> void:
 	var error := GardenSave.write(simulation.to_dictionary())
 	ui.show_notice("Garden saved" if error == OK else "Could not save garden")
+	ui.set_menu_visible(menu_open, error == OK or GardenSave.exists(), active_garden)
 
 func _load_garden() -> void:
 	var data := GardenSave.read()
@@ -156,7 +212,7 @@ func _load_garden() -> void:
 		ui.show_notice("No garden save found")
 		return
 	simulation.load_dictionary(data)
-	placement.restore_flowers(simulation.flower_positions)
+	placement.restore_items(simulation.placed_items())
 	ui.show_notice("Garden restored")
 
 func _set_debug_speed(multiplier: float) -> void:
@@ -184,6 +240,28 @@ func _debug_set_low_curiosity() -> void:
 	pixy.curiosity = 0.15
 	pixy.idle_remaining = 0.0
 	pixy.target = pixy.position
+
+func _debug_start_social() -> void:
+	if selected_index < 0:
+		ui.show_notice("Select a pixy first")
+		return
+	var pixy := simulation.pixies[selected_index]
+	var partner: PixyState = null
+	var nearest := INF
+	for candidate in simulation.pixies:
+		if candidate == pixy:
+			continue
+		var distance := pixy.position.distance_squared_to(candidate.position)
+		if distance < nearest:
+			nearest = distance
+			partner = candidate
+	if partner == null:
+		return
+	pixy.social_partner_id = partner.id
+	pixy.target = partner.position
+	pixy.activity = "Going to greet %s" % partner.element
+	pixy.idle_remaining = 0.0
+	pixy.social_cooldown = 0.0
 
 func _toggle_pause() -> void:
 	paused = not paused

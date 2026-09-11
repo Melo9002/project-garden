@@ -4,6 +4,9 @@ extends RefCounted
 
 const SAVE_PATH := "user://garden_save.json"
 
+static func exists() -> bool:
+	return FileAccess.file_exists(SAVE_PATH)
+
 static func write(data: Dictionary) -> Error:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file == null:

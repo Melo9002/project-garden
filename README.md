@@ -14,9 +14,11 @@ Implemented:
 - Layered 3D scenery and a 2D horizon forest create perspective parallax; oversized ground and foreground vegetation hide the map edges.
 - Four replaceable 2D billboard placeholder pixies representing Earth, Fire, Wind, and Water.
 - Click selection with a visible ring and a compact live identity/activity inspector.
-- One experimental flower-placement interaction with dry-ground validation and nearby pixy curiosity.
+- Flower, mossy resting-stone and wind-chime placement with full-object red invalid previews and dry-ground validation.
 - Gentle energy, comfort and curiosity needs with autonomous resting, water investigation and flower visits.
-- Readable JSON save/load for individual pixies, placed flowers, elapsed time and deterministic simulation state.
+- Readable JSON save/load for individual pixies, personalities, relationships, typed placed items, elapsed time and deterministic simulation state.
+- A garden menu for Continue, New Garden, Save, Load and Return. New gardens roll persistent personalities without erasing the previous save until explicitly saved.
+- Five personality values shape movement, need changes, item preference and social initiative. Pixies greet one another, build reciprocal affection/familiarity and remember at most three meaningful bonds.
 - F3 developer panel with exact needs, accelerated simulation, minute stepping and forced behavior-test conditions.
 - Provisional Earth, Fire, Wind and Water development for individual pixies and the first garden, with visible scenario targets.
 - Rising chromatic elemental flares that make active pixy and environmental energy sources visible.
@@ -80,6 +82,7 @@ The code keeps individual state and simulation rules independent of scene nodes 
 | `scripts/pixy_view.gd` | Temporary geometry, labels, and cosmetic hovering |
 | `scripts/garden_save.gd` | Plain JSON persistence boundary |
 | `scripts/verify_simulation.gd` | Headless simulation contract checks |
+| `scripts/verify_individuality.gd` | Menu, new-game, item reconstruction and invalid-preview checks |
 
 ## Checks
 
@@ -89,9 +92,11 @@ Run these commands from the repository root with Godot on PATH:
 godot --headless --path . --editor --import --quit
 godot --headless --path . --quit-after 180
 godot --headless --path . --script res://scripts/verify_simulation.gd
+godot --headless --path . --script res://scripts/verify_lakeshore.gd
+godot --headless --path . --script res://scripts/verify_individuality.gd
 ```
 
-The simulation check covers movement bounds, same-seed reproducibility, and individual-state isolation across 18,000 ticks. Import and runtime checks passed without script errors in the initial tool environment, which also emitted a system certificate-store warning. The prototype uses no network services.
+The checks cover movement bounds, same-seed reproducibility, personality and relationship persistence, item effects, shoreline agreement, new-game reconstruction and placement feedback. The prototype uses no network services and the verification scripts do not touch the player's save.
 
 Visual appearance and button interaction still require a desktop playtest; headless checks do not validate rendering.
 

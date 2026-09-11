@@ -1,0 +1,64 @@
+[gd_scene load_steps=11 format=3]
+[ext_resource type="Script" path="res://scripts/flower_patch.gd" id="1"]
+[sub_resource type="StandardMaterial3D" id="Valid"]
+shading_mode = 0
+albedo_color = Color(0.38, 0.9, 0.48, 0.85)
+[sub_resource type="StandardMaterial3D" id="Invalid"]
+shading_mode = 0
+albedo_color = Color(0.95, 0.28, 0.3, 0.85)
+[sub_resource type="StandardMaterial3D" id="ValidPreview"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.28, 0.9, 0.45, 0.18)
+[sub_resource type="StandardMaterial3D" id="InvalidPreview"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.06, 0.08, 0.62)
+[sub_resource type="TorusMesh" id="Ring"]
+inner_radius = 0.42
+outer_radius = 0.48
+rings = 24
+ring_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="StoneMat"]
+albedo_color = Color(0.44, 0.5, 0.4, 1)
+roughness = 0.95
+[sub_resource type="SphereMesh" id="StoneMesh"]
+material = SubResource("StoneMat")
+radius = 0.38
+height = 0.34
+radial_segments = 9
+rings = 5
+[sub_resource type="StandardMaterial3D" id="MossMat"]
+albedo_color = Color(0.35, 0.51, 0.27, 1)
+roughness = 1.0
+[sub_resource type="SphereMesh" id="MossMesh"]
+material = SubResource("MossMat")
+radius = 0.18
+height = 0.05
+radial_segments = 10
+rings = 4
+[node name="RestingStone" type="Node3D"]
+script = ExtResource("1")
+valid_preview_material = SubResource("ValidPreview")
+invalid_preview_material = SubResource("InvalidPreview")
+item_kind = &"resting_stone"
+[node name="Stone" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.16, 0)
+rotation_degrees = Vector3(3, 22, -5)
+scale = Vector3(1.25, 0.72, 1)
+mesh = SubResource("StoneMesh")
+[node name="Moss" type="MeshInstance3D" parent="."]
+position = Vector3(-0.08, 0.34, -0.03)
+scale = Vector3(1.4, 1, 0.9)
+mesh = SubResource("MossMesh")
+[node name="ValidRing" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.1, 0)
+mesh = SubResource("Ring")
+material_override = SubResource("Valid")
+visible = false
+[node name="InvalidRing" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.1, 0)
+mesh = SubResource("Ring")
+material_override = SubResource("Invalid")
+visible = false
